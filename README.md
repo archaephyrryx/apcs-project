@@ -52,37 +52,33 @@ to: gives name of variable whose value is to be taken as the unviversal value
 of: sub-quality of group
 
 
-<example>
-
-clarify int as year.
-clarify string as name.
-clarify string as title.
-
-clarify group as person:
-  name Name,
-  year BirthYear,
-  bool Alive,
-  year DeathYear.
-
-univ name CREATOR.
-univ year CREATED.
-univ title TITLE.
-
-let Book have:
-  person Author,
-  title Title,
-  bind TITLE to Title,
-  bind CREATOR to Name of Author,
-  year Written,
-  bind CREATED to Written.
-
-let Movie have:
-  person Director,
-  title Title,
-  bind TITLE to Title,
-  bind CREATOR to Name of Director,
-  year Released,
-  bind CREATED to Released.
-    
-</example>
+          clarify int as year.
+          clarify string as name.
+          clarify string as title.
+          
+          clarify group as person:
+            name Name,
+            year BirthYear,
+            bool Alive,
+            year DeathYear.
+          
+          univ name CREATOR.
+          univ year CREATED.
+          univ title TITLE.
+          
+          let Book have:
+            person Author,
+            title Title,
+            bind TITLE to Title,
+            bind CREATOR to Name of Author,
+            year Written,
+            bind CREATED to Written.
+          
+          let Movie have:
+            person Director,
+            title Title,
+            bind TITLE to Title,
+            bind CREATOR to Name of Director,
+            year Released,
+            bind CREATED to Released.
 
