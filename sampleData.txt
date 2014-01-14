@@ -1,0 +1,12 @@
+Title, Author, Year, Genre
+String, String, int, String
+The Sound and the Fury, William Faulkner, 1929, Fiction
+American Pastoral, Philip Roth, 1997, Fiction
+Mrs. Dalloway, Virginia Woolf, 1925, Fiction
+In the Penal Colony, Franz Kafka, 1919, Short Story
+The Circular Ruins, Jose Luis Borges, 1941, Short Story
+The Garden of Forking Ruins, Jose Luis Borges, 1941, Short Story
+Three Versions of Judasm, Jose Luis Borges, 1944, Short Story
+Pale Fire, Vladimir Nabokov, 1962, Fiction
+Sophie's Choice, William Styron, 1979, Fiction
+Hamlet, William Shakespeare, 1600, Play
