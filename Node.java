@@ -4,54 +4,134 @@
 
 import java.util.*;
 
-public class Node<T implements Comparable> {
+public class Node<T implements Comparable<T>> implements Comparable<Node<T>> {
     // Instance vars for key and value
-    private T _key;
-    private Object _value;
+    protected T _key;
+    protected Object _value;
 
-    // Is root, is leaf.
-    private boolean _isRoot, _isLeaf;
+    protected Node<T> _parent;
+    protected Node<T> _left, _right;
 
-    private boolean _hasLeft, _hasRight;
-
-    // Parent, left child, right child
-    private Node<T> _parent;
-    private Node<T> _left, _right;
-
-
-    // Constructor: creates root node
-    public Node() {
-	_isRoot = true;
-	_isLeaf = true;
-	_hasRight = false;
-	_hasLeft = false;
-    }
+    protected boolean _hasLeft, _hasRight, _hasParent;
 
     // Constructor: creates root node with initial key
     public Node( T key ) {
-	this();
-	_key = key;
+	this(null, key, null);
+	_hasParent = false;
     }
 
     // Constructor: creates root node with initial key, value
     public Node( T key, Object value ) {
-	this();
+	this(null, key, value);
+	_hasParent = false;
+    }
+
+    /* Constructor: initializes empty node, specified as having a particular
+     * parent node. This method should be implemented as only one part of a
+     * grafting, as it is necessary to test whether such an addition is valid,
+     * and, if it is, assign new values to various variables of both the child
+     * and parent. */
+    public Node( Node<T> parent, T key ) {
+	this(parent, key, null);
+    }
+
+    /* See note for null parental constructor */
+    public Node( Node<T> parent, T key, Object value ) {
 	_key = key;
 	_value = value;
-    }
-
-    public Node( Node<T> parent ) {
-	this();
-	_isRoot = false;
 	_parent = parent;
-	if (_parent.hasLeft && this == _parent.left) || (_parent.hasLeft && this == _parent.right ) ; 
-
+	_hasLeft = false;
+	_hasRight = false;
+	_hasParent = true;
     }
 
-    public Node( Node<T> parent, T key ) {}
-    public Node( Node<T> parent, T key, Object value ) {}
+
+    // Accessors for key, value, left, right
+    public T getKey() { return _key; }
+    public Object getValue() { return _value; }
+    public Node<T> getLeft() { return _left; } 
+    public Node<T> getRight() { return _right; }
+    public Node<T> getParent() { return _parent; }
+
+    // Boolean methods for node status
+    public boolean hasLeft() { return _hasLeft; }
+    public boolean hasRight() { return _hasRight; }
+
+    public boolean isRoot() { return !(_hasParent); }
+    public boolean isLeaf() { return !( _hasLeft || _hasRight ); } 
+
+    // Mutator for value
+    public Object setValue(Object value) {
+	Object oldValue = _value;
+	_value = value;
+	return oldValue;
+    }
 
 
+    // Implementation of Comparable's compareTo method: compares 
+    public int compareTo(Node<T> other) {
+	return (this.getKey()).compareTo(other.geKey());
+    }
+
+    /* insertion method putLeft */
+    protected void putLeft(Node<T> newleft) {
+	assert (this.compareTo(newleft) == 1) : "new left " + newleft._key + " > " + "node " + this._key; 
+	if (_hasLeft) {
+	    Node<T> grandChild = _left;
+	    _left = newleft;
+
+	    newleft._parent = this;
+	    newleft.addChild(grandChild);
+	} else
+	    setLeft(newleft);
+
+	return true;
+    }
 
 
+    /* insertion method putRight: */
+    protected void putRight(Node<T> newright) {
+	assert (this.compareTo(newright) == -1) : "new right " + newleft._key + " < " + "node " + this._key;
+	if (_hasRight) {
+	    Node<T> grandChild = _right;
+	    _right = newright;
+
+	    newright._parent = this;
+	    newright.addChild(grandChild);
+	} else
+	    setRight(newright);
+    }
+
+    // Overwrite left child
+    protected void setLeft(Node<T> left) {
+	assert (this.compareTo(newleft) == 1) : "new left " + newleft._key + " > " + "node " + this._key; 
+	_left = left;
+	return true;
+    }
+
+    // Overwrite right child
+    protected void setRight(Node<T> right) {
+	assert (this.compareTo(newright) == -1) : "new right " + newleft._key + " < " + "node " + this._key;
+	_right = right;
+    }
+
+
+    public void addChild(Node<T> child) {
+	assert (this.compareTo(child) != 0) : "repeated key: " + _key;
+
+	switch (this.compareTo(child)) {
+	    case 1:
+		if (_hasLeft)
+		    return _left.addChild(child);
+		else
+		    setLeft(child);
+		return;
+	    case -1:
+		if (_hasRight)
+		    return _right.addChild(child);
+		else
+		    setRight(child);
+		return;
+	}
+    }
 }
