@@ -12,7 +12,7 @@ public class Node<T implements Comparable<T>> implements Comparable<Node<T>> {
     protected Node<T> _parent;
     protected Node<T> _left, _right;
 
-    protected boolean _hasLeft, _hasRight, _hasParent;
+    protected boolean _hasLeft, _hasRight, _hasParent, _tree;
 
     // Constructor: creates root node with initial key
     public Node( T key ) {
@@ -59,6 +59,19 @@ public class Node<T implements Comparable<T>> implements Comparable<Node<T>> {
 
     public boolean isRoot() { return !(_hasParent); }
     public boolean isLeaf() { return !( _hasLeft || _hasRight ); } 
+
+
+    // Rooting in tree
+    public boolean isRooted() { return (tree != null); }
+
+    public void root(Tree<T> tree) {
+	assert !(isRooted()) : "Already rooted.";
+	_tree = tree;
+    }
+    public void getTree() {
+	assert (isRooted()) : "Node not rooted.";
+	return _tree;
+    }
 
     // Mutator for value
     public Object setValue(Object value) {
@@ -115,11 +128,7 @@ public class Node<T implements Comparable<T>> implements Comparable<Node<T>> {
 	_right = right;
     }
 
-
-    public void addChild(Node<T> child) {
-	assert (this.compareTo(child) != 0) : "repeated key: " + _key;
-
-	switch (this.compareTo(child)) {
+	    /*
 	    case 1:
 		if (_hasLeft)
 		    return _left.addChild(child);
@@ -131,7 +140,7 @@ public class Node<T implements Comparable<T>> implements Comparable<Node<T>> {
 		    return _right.addChild(child);
 		else
 		    setRight(child);
-		return;
-	}
-    }
+
+*/
+
 }

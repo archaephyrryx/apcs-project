@@ -32,77 +32,133 @@ public class Tree<T implements Comparable<T>> {
        return: the Tree thus created
        usage: Called after a root node is constructed, with that node as the root argument
      */
-
     public Tree(Node<T> root) { 
 	assert (!root.isRooted() || this = root.getTree()) : "RootNodeError: Node already rooted."
 	_root = root;
 	_head = _root;
     }
 
+    /* public T getRootKey() :
+           An accessor.
+       return: the key of the root node
+     */
     public T getRootKey() { return _root.getKey(); }
+
+    /* public T getHeadKey() :
+           An accessor.
+       return: the key of the head node.
+     */
     public T getHeadKey() { return _head.getKey(); }
 
-    protected T goLeft() {
-	_head = _head.getLeft();
-	return getHeadKey();
+    /* protected boolean goLeft() :
+           A mutator.
+       initial test: head node has left child
+       success: head is moved to its left child, returns true
+       failure: return false
+     */
+    protected boolean goLeft() {
+	if (_head.hasLeft()) {
+	    _head = _head.getLeft();
+	    return true;
+	}
+	return false;
     }
 
-    protected T goLeft() {
-	_head = _head.getLeft();
-	return getHeadKey();
+    /* protected boolean goRight() :
+           A mutator.
+       initial test: head node has right child
+       success: head is moved to its right child, returns true
+       failure: return false
+     */
+    protected T goRight() {
+	if (_head.hasRight()) {
+	    _head = _head.getRight();
+	    return true;
+	}
+	return false;
     }
 
+    /* protected T goUp() :
+           A mutator/accessor.
+       preconditions: head node has parent (i.e. is not root)
+       modifications: head is moved to the parent of the previous head
+       return: the key of the new head-node (parent of old head-node).
+     */
     protected T goUp() {
+	assert (_head != _root) : "Head at root; cannot ascend";
 	_head = _head.getParent();
-	return getHeadKey();
+	return _head.getKey();
     }
 
-    public Tree<T> getSubTree() {
-	return (new Tree(this._head));
+    /* protected T rootHead() :
+           A mutator/accessor
+       modifications: returns head to root
+       return: the key at new head-node (root)
+     */
+    protected T rootHead() {
+	if (_head != _root) {
+	    _head = _root;
+	}
+	return _head.getKey();
     }
+
+    /* public void add( Node<T> node ) :
+       preconditions: No node currently in the tree has the same key as the new
+		      node to be added
+       arguments:
+           > Node<T> node:
+               - A node to be added to the tree
+	       - Node has key not in tree
+       function: roots head, recursively descends tree until it reaches the
+           proper parent for the new node, determined by testing for children
+	   and comparison
+       modifications: adds a child to one node
+     */
+    public void add(Node<T> node) {
+	self.rootHead();
+	int compvalue;
+
+	while (true) {
+	    compvalue = node.compareTo(_head);
+	    assert (compvalue != 0) : "Node has duplicate key."
+	    if (compvalue == 1) {
+		if (goRight()) {
+		    continue;
+		}
+		else {
+		    break;
+		}
+	    } else {
+		if (goLeft()) {
+		    continue;
+		}
+		else {
+		    break;
+		}
+	    }
+	}
+
+
+
+	    case 1:
+		if (_hasLeft)
+		    return _left.addChild(child);
+		else
+		    setLeft(child);
+		return;
+	    case -1:
+		if (_hasRight)
+		    return _right.addChild(child);
+		else
+		    setRight(child);
+		return;
+	}
+    }
+
+
+
 
 }
-/* Write a description below */
-
-/* 
- * class : 
- * [description]
- */
-
-
-/* Use or modify a template header below */
-
-// public class  {
-// public abstract class  {
-// public interface  {
-// public class  implements  {
-// public class  extends  {
-
-
-/* Use these for vars, methods */
-
-    // private  ;
-    // public  ;
-    // protected  ;
-
-    // private static  ;
-    // public static  ;
-    // protected static  ;
-
-
-    // private ( ) {}
-    // public  ( ) {}
-    // protected ( ) {}
-
-    // private static ( ) {}
-    // public static ( ) {}
-    // protected static ( ) {}
-
-   
-
-
-// }
-
 
 /* Generic Descriptions of methods, variables */
 
