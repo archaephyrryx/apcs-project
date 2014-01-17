@@ -1,5 +1,7 @@
 //class Interface- interacts with user
 
+import cs1.Keyboard;
+
 public class Interface {
 
     //main method
@@ -8,8 +10,8 @@ public class Interface {
 	/*=========================================
 	  =========================================*/
 	System.out.println("What is your query?");
-	String query = keyboard.readString();
-	parseQuery = new Parser(query);
+	String query = Keyboard.readString();
+	Parser parseQuery = new Parser(query);
     }
 
 } //end class
