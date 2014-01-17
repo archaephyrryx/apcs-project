@@ -159,28 +159,3 @@ public class Tree<T implements Comparable<T>> {
 
 
 }
-
-/* Generic Descriptions of methods, variables */
-
-    /* visibility return method( args ) :
-       preconditions: (asserted)
-       arguments:
-           > type name: 
-               - What it means
-	       - Preconditions
-	       - Modifications method makes
-	       - Special cases
-	       - Pathological cases
-       function: (what it does)
-       process: (how it does it)
-           > Any proofs or explanations here
-
-       modifications: (what changes)
-       return value: what it returns, what that represents
-       special/pathological cases: (if any)
-       usage: (standalone, or as multi-step operation)
-     */
-       
-
-
-

@@ -155,11 +155,20 @@ public class Node<T implements Comparable<T>> implements Comparable<Node<T>> {
      *           arg, the following configurations must satisfy the
      *           following conditions:
      * 
-     *                  A  |*|   A
-     *  *********      /   |*|    \   *********
-     *  * A>B>C *     B    |*|     B  * B>C>A * 
-     *  *********    /     |*|    /   ********* 
-     *              C      |*|   C    
+     *                  A  |||   A              
+     *  *********      /   |||    \   ********* 
+     *  * A>B>C *     B    |||     B  * B>C>A *  
+     *  *********    /     |||    /   *********  
+     *              C      |||   C                   
+     *                     |||                       
+     *  -------------------+++----------------                       
+     *  -------------------+++---------------- 
+     *                     |||                       
+     *              A      |||     A          
+     *  *********    \     |||    /   ********* 
+     *  * A<B<C *     B    |||   B    * B<C<A *  
+     *  *********      \   |||    \   *********  
+     *                  C  |||     C               
      *
      * Pathological cases: Due to the enforcement of only the local conditions,
      * this method should not be called without complete recursive testing. For
@@ -171,58 +180,22 @@ public class Node<T implements Comparable<T>> implements Comparable<Node<T>> {
 	         left.compareTo(this) == -1 );
 	_left = left;
     }
-
-    // Overwrite right child
     protected void setRight(Node<T> right) {
-	assert (this.compareTo(newright) == -1) : "new right " + newleft._key + " < " + "node " + this._key;
+	assert ( right.compareTo(parent) == this.compareTo(parent) && 
+	         right.compareTo(this) == 1 );
 	_right = right;
     }
+    
+    // protected void add:
+    // Calls setright or setleft, based on comparison.
+    protected void add(Node<T> child) {
 
+	assert (child.compareTo(this) != 0);
 
-
-    /* public boolean add( Node<T> child ):
-     *     Adds a child node to the current node.
-     * Preconditions: the current node must be the correct parent for the child
-     * in the context of the overarching Tree structure, and the corresponding
-     * child slot for the new child must be unoccupied. These conditions are
-     * enforced 
-
-     */
-    public boolean add( Node<T> child ) {
-	    /*
-	    case 1:
-		if (_hasLeft)
-		    return _left.addChild(child);
-		else
-		    setLeft(child);
-		return;
-	    case -1:
-		if (_hasRight)
-		    return _right.addChild(child);
-		else
-		    setRight(child);
-
-*/
+	if (child.compareTo(this) == -1)
+	    setLeft(child);
+	else
+	    setRight(child);
+    }
 
 }
-    /* visibility return method( args ) :
-       preconditions: (asserted)
-       arguments:
-           > type name: 
-               - What it means
-	       - Preconditions
-	       - Modifications method makes
-	       - Special cases
-	       - Pathological cases
-       function: (what it does)
-       process: (how it does it)
-           > Any proofs or explanations here
-
-       modifications: (what changes)
-       return value: what it returns, what that represents
-       special/pathological cases: (if any)
-       usage: (standalone, or as multi-step operation)
-     */
-
-
-
