@@ -2,21 +2,20 @@
 
 public class Parser {
 
-    private String [] _input;
+    private String [] _query;
 
     /*=====================================
       constructor
       sets _query to query 
       =====================================*/
     public Parser(String input) {
-	_input = input;
+	_query = input.split("//s");
     }
 
    /*=====================================
       parseQuery() -- parses query and executes functions in Engine 
       =====================================*/
-    public static void parseQuery() {
-	String [] _query = _input.split("//s");
+    public void parseQuery() {
 	if (!_query[0].equals("query:")) {
 		System.out.println("invalid input");
 	}
@@ -27,8 +26,8 @@ public class Parser {
 
       	if (space.equals("all")) {Engine.retrieveAll(type);}
 	else if (space.equals("any")) {Engine.retrieveAny(type);}
-        else if (space.equals("just")) {Engine.retrieveJust(type);}
-       	else if (space.equals("only")) {Engine.retrieveOnly(type);}
+        else if (space.equals("just")) {Engine.retrieveJust(type, Integer.parseInt( _query[4]));}
+       	else if (space.equals("only")) {Engine.retrieveOnly(type, Integer.parseInt(_query[4]));}
     }
 
 } //end class
