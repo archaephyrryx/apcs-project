@@ -179,11 +179,13 @@ public class Node<T implements Comparable<T>> implements Comparable<Node<T>> {
 	assert ( left.compareTo(parent) == this.compareTo(parent) && 
 	         left.compareTo(this) == -1 );
 	_left = left;
+	_left.parent = this;
     }
     protected void setRight(Node<T> right) {
 	assert ( right.compareTo(parent) == this.compareTo(parent) && 
 	         right.compareTo(this) == 1 );
 	_right = right;
+	right._parent = this;
     }
     
     // protected void add:
@@ -196,6 +198,58 @@ public class Node<T implements Comparable<T>> implements Comparable<Node<T>> {
 	    setLeft(child);
 	else
 	    setRight(child);
+    }
+  
+    // public Node<T> disown:
+    // Node clears its corresponding child slot, child's parent slot; returns
+    // child
+    public Node<T> disown(int relation) {
+	Node<T> orphan;
+	switch relation {
+	    -1:
+		orphan = _left;
+		orphan._parent = null;
+		_left = null;
+		return orphan;
+	    1:
+		orphan = _right;
+		orphan._parent = null;
+		_left = null;
+		return orphan;
+	}
+    }
+
+
+    // public Node<T> changeling:
+    // Node swaps its child for the changeling, reassigns parenthood, and
+    // returns former child.
+    public Node<T> swap(Node<T> changeling) {
+	Node<T> child = disown(changeling.compareTo(this));
+	adopt(changeling);
+	return child;
+    }
+
+    // protected Node<T> adopt:
+    // Sets corresponding child slot, orphans's parent slot;
+    protected void adopt(Node<T> orphan) {
+	switch (orphan.compareTo(this)) {
+	    -1:
+		_left = orphan;
+		orphan._parent = this;
+	    1:
+		_right = orphan;
+		orphan._parent = this;
+	}
+    }
+
+    
+    /* protected boolean hasDescendant(Node<T> node) :
+           returns a boolean indicating whether a node is a descendant of the
+	   current node. */
+    protected boolean hasDescendant(Node<T> node) {
+	return (node == this ||
+		(hasLeft() && _left.hasDescendant(node)) ||
+		(hasRight() && _right.hasDescendant(node)));
     }
 
 }

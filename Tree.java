@@ -16,7 +16,7 @@
 import java.util.*;
 
 public class Tree<T implements Comparable<T>> {
-    protected Node<T> _root;
+    protected Root<T> _root;
     protected Node<T> _head;
 
     /* public Tree<T>( Node<T> root ) :
@@ -36,6 +36,7 @@ public class Tree<T implements Comparable<T>> {
 	assert (!root.isRooted() || this = root.getTree()) : "RootNodeError: Node already rooted."
 	_root = root;
 	_head = _root;
+	_root.root(this);
     }
 
     /* public T getRootKey() :
@@ -57,11 +58,9 @@ public class Tree<T implements Comparable<T>> {
        failure: return false
      */
     protected boolean goLeft() {
-	if (_head.hasLeft()) {
-	    _head = _head.getLeft();
-	    return true;
-	}
-	return false;
+	if !(_head.hasLeft()) return false;
+	_head = _head.getLeft();
+	return true;
     }
 
     /* protected boolean goRight() :
@@ -70,12 +69,10 @@ public class Tree<T implements Comparable<T>> {
        success: head is moved to its right child, returns true
        failure: return false
      */
-    protected T goRight() {
-	if (_head.hasRight()) {
-	    _head = _head.getRight();
-	    return true;
-	}
-	return false;
+   protected boolean goRight() {
+	if !(_head.hasRight()) return false;
+	_head = _head.getRight();
+	return true;
     }
 
     /* protected T goUp() :
@@ -84,10 +81,10 @@ public class Tree<T implements Comparable<T>> {
        modifications: head is moved to the parent of the previous head
        return: the key of the new head-node (parent of old head-node).
      */
-    protected T goUp() {
-	assert (_head != _root) : "Head at root; cannot ascend";
+    protected boolean goUp() {
+	if (_head == _root) return false;
 	_head = _head.getParent();
-	return _head.getKey();
+	return true;
     }
 
     /* protected T rootHead() :
@@ -102,7 +99,7 @@ public class Tree<T implements Comparable<T>> {
 	return _head.getKey();
     }
 
-    /* public void add( Node<T> node ) :
+    /* public boolean add( Node<T> node ) :
        preconditions: No node currently in the tree has the same key as the new
 		      node to be added
        arguments:
@@ -114,48 +111,16 @@ public class Tree<T implements Comparable<T>> {
 	   and comparison
        modifications: adds a child to one node
      */
-    public void add(Node<T> node) {
-	self.rootHead();
-	int compvalue;
-
-	while (true) {
-	    compvalue = node.compareTo(_head);
-	    assert (compvalue != 0) : "Node has duplicate key."
-	    if (compvalue == 1) {
-		if (goRight()) {
-		    continue;
-		}
-		else {
-		    break;
-		}
-	    } else {
-		if (goLeft()) {
-		    continue;
-		}
-		else {
-		    break;
-		}
-	    }
-	}
-
-
-
-	    case 1:
-		if (_hasLeft)
-		    return _left.addChild(child);
-		else
-		    setLeft(child);
-		return;
-	    case -1:
-		if (_hasRight)
-		    return _right.addChild(child);
-		else
-		    setRight(child);
-		return;
-	}
+    public boolean add(Node<T> node) {
+	return _root.add(node);
     }
 
 
+    /* public bolean inTree(Node<T> node) :
+	    tests whether a particular node is in the tree.  */
+    public boolean inTree(Node<T> node) {
+	return _root.hasDescendant(node);
+    }
 
 
 }

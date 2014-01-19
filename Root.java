@@ -48,7 +48,8 @@ public class Root<T extends Comparable<T>> extends Node<T> {
 
 	while (true) {
 	    compvalue = node.compareTo(parent);
-	    assert (compvalue != 0);
+	    if (compvalue == 0) 
+		return false;
 	    if (compvalue == 1) {
 		if (parent.goRight()) continue;
 		else break;
@@ -58,8 +59,21 @@ public class Root<T extends Comparable<T>> extends Node<T> {
 	    }
 	}
 
-	parent.super.add(child);
+	if (parent == root) {
+	    parent.super.add(child);
+	} else {
+	    parent.add(child);
+	}
+	return true;
     }
 
-
-
+    
+    /* public boolean hasDescendant(Node<T> node) :
+           returns a boolean indicating whether a node is a descendant of the
+	   root. */
+    public boolean hasDescendant(Node<T> node) {
+	return (node == this ||
+		(hasLeft() && _left.hasDescendant(node)) ||
+		(hasRight() && _right.hasDescendant(node)));
+    }
+}
