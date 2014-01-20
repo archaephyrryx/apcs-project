@@ -6,53 +6,86 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 public class Main {
-
     public static void main(String[] args) {
-        String inputText = "let Book int Year, bool Inprint, string Title;\n";
-
+        String inputText = "let Book int Year, bool Inprint, string Title;\n\n";
         ANTLRInputStream input = new ANTLRInputStream(inputText);
-
         SchemaLexer lexer = new SchemaLexer(input);
-
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-
         SchemaParser parser = new SchemaParser(tokens);
 
         parser.setBuildParseTree(true);  // tell ANTLR to build a parse tree
-
-        ParserRuleContext tree = parser.s();
+        ParserRuleContext tree = parser.schema();
 
 	Context ctx = new Context();
-
         FirstSchemaVisitor visitor = new FirstSchemaVisitor(ctx);
-
         visitor.visit(tree);
+
+	CompoundSymbol book = (CompoundSymbol) ctx.symtab.get("Book");
+	for (Attribute a : book.attrs) {
+	    System.out.println(a.name + ": " + a.type.name);
+	}
     }
 }
 
-class Property {
-    public String atype;
-    public String aname;
-}
-
-class Type {
-    public String otype;
-    public String oname;
-    public HashMap<Property> pmap = new HashMap<Property>();
-}
-
 class Context {
-    public HashMap<Type> tmap = new HashMap<Type>();
-    public HashMap<Property> pmap = new HashMap<Property>();
-    public Type declared = null;
-    public String ptype;
+    public HashMap<String, Symbol> symtab = new HashMap<String, Symbol>();
 
-    public Context() { }
+    public Context() {
+	symtab.put("int", new PrimitiveSymbol("int", Symbol.Type.IntType));
+	symtab.put("bool", new PrimitiveSymbol("bool", Symbol.Type.BoolType));
+	symtab.put("string", new PrimitiveSymbol("string", Symbol.Type.StrType));
+    }
+}
+
+class Symbol {
+    public enum Type { IntType, StrType, BoolType, AliasType, CompoundType };
+    public String name;
+    public Type type;
+    public Symbol(String _name, Type _type) { name = _name; type = _type; }
+}
+class AtomSymbol extends Symbol {
+    public AtomSymbol(String name, Type type) { super(name, type); }
+}
+class PrimitiveSymbol extends AtomSymbol {
+    public PrimitiveSymbol(String name, Type type) { super(name, type); }
+}
+class AliasSymbol extends AtomSymbol {
+    public PrimitiveSymbol actualType;
+    public AliasSymbol(String name, PrimitiveSymbol target) {
+	super(name, Symbol.Type.AliasType);
+	this.actualType = target;
+    }
+}
+class CompoundSymbol extends Symbol {
+    public ArrayList<Attribute> attrs;
+    public CompoundSymbol(String name, ArrayList<Attribute> _attrs) {
+	super(name, Symbol.Type.CompoundType);
+	this.attrs = _attrs;
+    }
+}
+class Attribute {
+    public String name;
+    public AtomSymbol type;
+    public Attribute(String _name, AtomSymbol _type) {
+	this.name = _name;
+	this.type = _type;
+    }
+}
+
+class Node {
+    public String str;
+    public Symbol sym;
+    public Attribute attr;
+    public ArrayList<Attribute> attrs;
+
+    public Node(String _str) { str = _str; }
+    public Node(Symbol _sym) { sym = _sym; }
+    public Node(Attribute _attr) { attr = _attr; }
+    public Node(ArrayList<Attribute> _attrs) { attrs = _attrs; }
 }
 
 
-class FirstSchemaVisitor extends SchemaBaseVisitor<Context> {
-    
+class FirstSchemaVisitor extends SchemaBaseVisitor<Node> {
     private Context _ctx = null;
 
     public FirstSchemaVisitor( Context ctx ) {
@@ -60,93 +93,42 @@ class FirstSchemaVisitor extends SchemaBaseVisitor<Context> {
     }
 
     @Override
-    public Context visitDeclareProp(SchemaParser.DeclarePropContext ctx) {
-        return visit(ctx.e(0))*visit(ctx.e(1));
-    }
-    
-    @Override
-    public Double visitDiv(SchemaParser.DivContext ctx) {
-        
-        System.out.println("DIV: " + ctx.getText());
-        
-//        return visitChildren(ctx); 
-        
-        return visit(ctx.e(0))/visit(ctx.e(1));
-    }
-    
-    @Override
-    public Double visitAdd(SchemaParser.AddContext ctx) {
-        
-        System.out.println("ADD: " + ctx.getText());
-        
-//        return visitChildren(ctx); 
-        
-        return visit(ctx.e(0))+visit(ctx.e(1));
-    }
-    
-    @Override
-    public Double visitSub(SchemaParser.SubContext ctx) {
-        
-        System.out.println("SUB: " + ctx.getText());
-        
-//        return visitChildren(ctx); 
-        
-        return visit(ctx.e(0))-visit(ctx.e(1));
-    }
-    
-    @Override
-    public Double visitNumber(SchemaParser.NumberContext ctx) {
-        
-        System.out.println("NUMBER: " + ctx.getText());
-        
-//        return visitChildren(ctx); 
-        
-        return Double.valueOf(ctx.getText());
-    }
-    
-    @Override
-    public Double visitInt(SchemaParser.IntContext ctx) {
-        
-        System.out.println("INT: " + ctx.getText());
-        
-//        return visitChildren(ctx); 
-        
-        return Double.valueOf(ctx.getText());
-    }
-    
-    @Override
-    public Double visitPar(SchemaParser.ParContext ctx) {
-        
-        System.out.println("PAR: " + ctx.getText());
-        
-        return visit(ctx.e());
-
-    }
-    
-    @Override
-    public Double visitVar(SchemaParser.VarContext ctx) {
-        System.out.println("VAR: " + ctx.getText());
-        
-        if (!vars.containsKey(ctx.getText())) {
-            System.err.println(
-                    "ERROR: variable " + ctx.getText() + " is not defined!");
-            System.exit(1);
-        }
-        
-        return vars.get(ctx.getText());
-    }
-    
-    @Override
-    public Double visitAssign(SchemaParser.AssignContext ctx) {
-        System.out.println("VAR: " + ctx.getText());
-        
-        Double value = visit(ctx.e());
-        
-        vars.put(ctx.VAR().getText(), value);
-        
-        System.out.println(" --> " + ctx.VAR().getText() + " = " + value);
-        
-        return value;
+    public Node visitGetsym(SchemaParser.GetsymContext ctx) {
+	String tok = ctx.t.getText();
+	// XXX: Handle not found, handle non-Atom
+	AtomSymbol sym = (AtomSymbol) _ctx.symtab.get(tok);
+	return new Node(sym);
     }
 
+    @Override
+    public Node visitAddFirstProp(SchemaParser.AddFirstPropContext ctx) {
+	Attribute a = visit(ctx.prop()).attr;
+	ArrayList<Attribute> attrs = new ArrayList<Attribute>();
+	attrs.add(a);
+	return new Node(attrs);
+    }
+
+    @Override
+    public Node visitAddNextProp(SchemaParser.AddNextPropContext ctx) {
+	Attribute a = visit(ctx.prop()).attr;
+	ArrayList<Attribute> attrs = visit(ctx.proplist()).attrs;
+	attrs.add(a);
+	return new Node(attrs);
+    }
+
+    @Override
+    public Node visitDeclareProp(SchemaParser.DeclarePropContext ctx) {
+	String name = ctx.ID().getText();
+	AtomSymbol sym = (AtomSymbol) visit(ctx.ptype()).sym;
+	Attribute attr = new Attribute(name, sym);
+	return new Node(attr);
+    }
+
+    @Override
+    public Node visitLetType(SchemaParser.LetTypeContext ctx) {
+	String name = ctx.ID().getText();
+	ArrayList<Attribute> attrs = visit(ctx.proplist()).attrs;
+	_ctx.symtab.put(name, new CompoundSymbol(name, attrs));
+	return null;
+    }
 }
