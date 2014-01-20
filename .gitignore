@@ -1,0 +1,3 @@
+*.class
+antlr/Schema*.java
+antlr/*.tokens
