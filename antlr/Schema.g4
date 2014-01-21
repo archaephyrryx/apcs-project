@@ -45,9 +45,9 @@ csvrecord : csventry				# GetFirstCSVEntry
           | csventry COMMA csvrecord		# GetNextCSVEntry
 	  ;
 
-csventry : NUMBER				# GetCSVNumber
-	 | (TRUE|FALSE)				# GetCSVBool
-	 | QSTRING				# GetCSVQstr
+csventry : v=NUMBER				# GetCSVNumber
+	 | v=(TRUE|FALSE)			# GetCSVBool
+	 | v=QSTRING				# GetCSVQstr
 	 ;
 
 fragment QUOTE : '"';

@@ -111,7 +111,7 @@ class CSVEntry {
 	_boolEntry = boolEntry;
     }
 
-    public CSVEntry(EntryType type, int strEntry) {
+    public CSVEntry(EntryType type, String strEntry) {
 	_type = type;
 	_strEntry = strEntry;
     }
@@ -252,20 +252,45 @@ class FirstSchemaVisitor extends SchemaBaseVisitor<Node> {
     }
 
     @Override
-    public Node visitGetNextCSVEntry(SchemaParser.GetNextCSVEntryContext ctx);
+    public Node visitGetFirstCSVEntry(SchemaParser.GetFirstCSVEntryContext ctx) {
+	CSVEntry e = visit(ctx.csventry());
+	ArrayList<CSVEntry> entries = new ArrayList<CSVEntry>();
+	entries.add(e);
+	return new Node(entries);
+    }
 
     @Override
-    public Node visitGetCSVRecord(SchemaParser.GetCSVRecordContext ctx);
+    public Node visitGetNextCSVEntry(SchemaParser.GetNextCSVEntryContext ctx){
+	CSVEntry e = visit(ctx.csventry());
+	ArrayList<CSVEntry> entries = visit(ctx.csvrecord()).entries;
+	entries.add(e);
+	return new Node(entries);
+    }
 
     @Override
-    public Node visitGetCSVQstr(SchemaParser.GetCSVQstrContext ctx);
+    public Node visitGetCSVRecord(SchemaParser.GetCSVRecordContext ctx) {
+	ArrayList<CSVEntry> csvline = visit(ctx.csvrecord()).entries;
+	return new Node(csvline);
+    }
 
     @Override
-    public Node visitGetCSVNumber(SchemaParser.GetCSVNumberContext ctx);
+    public Node visitGetCSVQstr(SchemaParser.GetCSVQstrContext ctx) {
+	QString qstr = (ctx.QSTRING()).getText();
+	CSVQstr entry = new CSVQstr(qstr);
+	return new Node(entry);
+    }
 
     @Override
-    public Node visitGetFirstCSVEntry(SchemaParser.GetFirstCSVEntryContext ctx);
+    public Node visitGetCSVNumber(SchemaParser.GetCSVNumberContext ctx) {
+	int number = Integer((ctx.NUMBER()).getText).intValue();
+	CSVNumber entry = new CSVNumber(number);
+	return new Node(entry);
+    }
 
     @Override
-    public Node visitGetCSVBool(SchemaParser.GetCSVBoolContext ctx);
+    public Node visitGetCSVBool(SchemaParser.GetCSVBoolContext ctx) {
+	boolean bool = Boolean((ctx.NUMBER()).getText).booleanValue();
+	CSVBool entry = new CSVBool(bool);
+	return new Node(entry);
+    }
 }
