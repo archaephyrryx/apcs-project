@@ -45,9 +45,9 @@ class Context {
 
 class Symbol {
     public enum Type { IntType, StrType, BoolType, AliasType, CompoundType };
-    public String name;
-    public Type type;
-    public Symbol(String _name, Type _type) { name = _name; type = _type; }
+    public String _name;
+    public Type _type;
+    public Symbol(String name, Type type) { _name = name; _type = type; }
 }
 class AtomSymbol extends Symbol {
     public AtomSymbol(String name, Type type) { super(name, type); }
@@ -63,31 +63,107 @@ class AliasSymbol extends AtomSymbol {
     }
 }
 class CompoundSymbol extends Symbol {
-    public ArrayList<Attribute> attrs;
-    public CompoundSymbol(String name, ArrayList<Attribute> _attrs) {
+    public ArrayList<Attribute> _attrs;
+    public CompoundSymbol(String name, ArrayList<Attribute> attrs) {
 	super(name, Symbol.Type.CompoundType);
-	this.attrs = _attrs;
+	this._attrs = attrs;
     }
 }
 class Attribute {
-    public String name;
-    public AtomSymbol type;
-    public Attribute(String _name, AtomSymbol _type) {
-	this.name = _name;
-	this.type = _type;
+    public String _name;
+    public AtomSymbol _type;
+    public Attribute(String name, AtomSymbol type) {
+	this._name = name;
+	this._type = type;
+    }
+}
+
+class QString {
+    public String _qstring;
+
+    public QString(String qstring) {
+	_qstring = qstring;
+    }
+
+    public String unQuote() {
+	String unq = _qstring;
+	unq = unq.replaceAll("\\\\(.)", "\\1");
+	unq = unq.replaceAll("^\\\"", "");
+	unq = unq.replaceAll("\\\"$", "");
+	return unq;
+    }
+}
+
+class CSVEntry {
+    public enum EntryType { Number, Bool, String };
+    public EntryType _type;
+    public int _numberEntry;
+    public boolean _boolEntry;
+    public String _strEntry;
+
+    public CSVEntry(EntryType type, int numberEntry) {
+	_type = type;
+	_numberEntry = numberEntry;
+    }
+
+    public CSVEntry(EntryType type, boolean boolEntry) {
+	_type = type;
+	_boolEntry = boolEntry;
+    }
+
+    public CSVEntry(EntryType type, int strEntry) {
+	_type = type;
+	_strEntry = strEntry;
+    }
+}
+
+class CSVNumber extends CSVEntry {
+    public EntryType _type = Number;
+    public int _numberEntry;
+
+
+    public CSVNumber(int numberEntry) {
+	super(_type, numberEntry);
+	this._numberEntry = numberEntry;
+    }
+}
+
+class CSVBool extends CSVEntry {
+    public EntryType _type = Bool;
+    public boolean _boolEntry;
+
+    public CSVBool(boolean boolEntry) {
+	super(_type, boolEntry);
+	this._boolEntry = boolEntry;
+    }
+}
+
+class CSVQstr extends CSVEntry {
+    public EntryType _type = Str;
+    public String _strEntry;
+
+    public CSVQstr(QString QstrEntry) { this(QstrEntry.unQuote()); }
+
+    public CSVQstr(String strEntry) {
+	super(_type, strEntry);
+	this._strEntry = strEntry;
     }
 }
 
 class Node {
-    public String str;
-    public Symbol sym;
-    public Attribute attr;
-    public ArrayList<Attribute> attrs;
+    public String _str;
+    public Symbol _sym;
+    public Attribute _attr;
+    public ArrayList<Attribute> _attrs;
+    public CSVEntry _entry;
+    public ArrayList<CSVEntry> _entries;
 
-    public Node(String _str) { str = _str; }
-    public Node(Symbol _sym) { sym = _sym; }
-    public Node(Attribute _attr) { attr = _attr; }
-    public Node(ArrayList<Attribute> _attrs) { attrs = _attrs; }
+    public Node(String str) { _str = str; }
+    public Node(Symbol sym) { _sym = sym; }
+    public Node(Attribute attr) { _attr = attr; }
+    public Node(ArrayList<Attribute> attrs) { _attrs = attrs; }
+    public Node(CSVEntry entry) { _entry = entry; }
+    public Node(ArrayList<CSVEntry> entries) { _entries = entries; }
 }
 
 
@@ -152,13 +228,19 @@ class FirstSchemaVisitor extends SchemaBaseVisitor<Node> {
 	String type = ctx.ID().getText();
 	CompoundSymbol sym = (CompoundSymbol) _ctx.symtab.get(type);
 	String qfile = ctx.QSTRING().getText();
+     /* QString qfile = new Qstring(ctx.QSTRING().getText());
+	String file = qfile.unQuote();
+        /*
+      */
 	String file = qfile.replaceAll("\\\\(.)", "\\1");
 	file = file.replaceAll("^\\\"", "");
 	file = file.replaceAll("\\\"$", "");
+   // */
 	loadData(file, sym);
 	return null;
     }
 
+    @Override
     public void loadData(String filename, CompoundSymbol sym) {
 	System.out.printf("Will load %s data from %s.\n", sym.name, filename);
 	try {
@@ -168,4 +250,22 @@ class FirstSchemaVisitor extends SchemaBaseVisitor<Node> {
 	    System.exit(1);
 	}
     }
+
+    @Override
+    public Node visitGetNextCSVEntry(SchemaParser.GetNextCSVEntryContext ctx);
+
+    @Override
+    public Node visitGetCSVRecord(SchemaParser.GetCSVRecordContext ctx);
+
+    @Override
+    public Node visitGetCSVQstr(SchemaParser.GetCSVQstrContext ctx);
+
+    @Override
+    public Node visitGetCSVNumber(SchemaParser.GetCSVNumberContext ctx);
+
+    @Override
+    public Node visitGetFirstCSVEntry(SchemaParser.GetFirstCSVEntryContext ctx);
+
+    @Override
+    public Node visitGetCSVBool(SchemaParser.GetCSVBoolContext ctx);
 }
