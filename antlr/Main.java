@@ -1,5 +1,7 @@
 import java.util.*;
 import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.ANTLRFileStream;
+import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
@@ -7,22 +9,25 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 public class Main {
     public static void main(String[] args) {
-        String inputText = "let Book int Year, bool Inprint, string Title;\n\n";
-        ANTLRInputStream input = new ANTLRInputStream(inputText);
-        SchemaLexer lexer = new SchemaLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        SchemaParser parser = new SchemaParser(tokens);
+	try {
+	    ANTLRInputStream input = new ANTLRFileStream(args[0]);
+	    SchemaLexer lexer = new SchemaLexer(input);
+	    CommonTokenStream tokens = new CommonTokenStream(lexer);
+	    SchemaParser parser = new SchemaParser(tokens);
 
-        parser.setBuildParseTree(true);  // tell ANTLR to build a parse tree
-        ParserRuleContext tree = parser.schema();
+	    parser.setBuildParseTree(true);  // tell ANTLR to build a parse tree
+	    ParserRuleContext tree = parser.schema();
 
-	Context ctx = new Context();
-        FirstSchemaVisitor visitor = new FirstSchemaVisitor(ctx);
-        visitor.visit(tree);
+	    Context ctx = new Context();
+	    FirstSchemaVisitor visitor = new FirstSchemaVisitor(ctx);
+	    visitor.visit(tree);
 
-	CompoundSymbol book = (CompoundSymbol) ctx.symtab.get("Book");
-	for (Attribute a : book.attrs) {
-	    System.out.println(a.name + ": " + a.type.name);
+	    CompoundSymbol book = (CompoundSymbol) ctx.symtab.get("Book");
+	    for (Attribute a : book.attrs) {
+		System.out.println(a.name + ": " + a.type.name);
+	    }
+	} catch (java.io.IOException e) {
+	    System.err.println(e);
 	}
     }
 }
@@ -129,6 +134,15 @@ class FirstSchemaVisitor extends SchemaBaseVisitor<Node> {
 	String name = ctx.ID().getText();
 	ArrayList<Attribute> attrs = visit(ctx.proplist()).attrs;
 	_ctx.symtab.put(name, new CompoundSymbol(name, attrs));
+	return null;
+    }
+
+    @Override
+    public Node visitClarifyType(SchemaParser.ClarifyTypeContext ctx) {
+	String name = ctx.ID().getText();
+	PrimitiveSymbol sym = (PrimitiveSymbol) visit(ctx.ptype()).sym;
+	AliasSymbol alias = new AliasSymbol(name, sym);
+	_ctx.symtab.put(name, alias);
 	return null;
     }
 }

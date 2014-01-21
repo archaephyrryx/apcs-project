@@ -1,12 +1,21 @@
 grammar Schema;
 
 schema :
-      ( block '\n\n' )*
+      ( block )*
     ;
 
 block :
-    LET ID proplist (PERIOD|SEMI)		# LetType
+    letblock
+  | clarifyblock
   ;
+
+clarifyblock :
+    CLARIFY ptype AS ID (PERIOD|SEMI)           #ClarifyType
+  ;
+
+letblock :
+    LET ID proplist (PERIOD|SEMI)		# LetType
+    ;
 
 proplist :
     prop					#AddFirstProp
@@ -24,10 +33,12 @@ ptype :
   | t=ID					# Getsym
   ;
 
+AS	: 'as' ;
 INT	: 'int' ;
 BOOL	: 'bool' ;
 STR	: 'string' ;
 LET	: 'let' ;
+CLARIFY	: 'clarify' ;
 COLON	: ':' ;
 SEMI	: ';' ;
 PERIOD	: '.' ;
