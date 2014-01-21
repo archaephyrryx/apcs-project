@@ -1,12 +1,13 @@
 grammar Schema;
 
 schema :
-      ( block )*
+      ( command )*
     ;
 
-block :
+command :
     letblock
   | clarifyblock
+  | loadcmd
   ;
 
 clarifyblock :
@@ -15,6 +16,10 @@ clarifyblock :
 
 letblock :
     LET ID proplist (PERIOD|SEMI)		# LetType
+    ;
+
+loadcmd :
+    LOAD ID QSTRING (SEMI|PERIOD)		#Load
     ;
 
 proplist :
@@ -33,11 +38,35 @@ ptype :
   | t=ID					# Getsym
   ;
 
+csvline : csvrecord '\n' 			# GetCSVRecord
+	;
+
+csvrecord : csventry				# GetFirstCSVEntry
+          | csventry COMMA csvrecord		# GetNextCSVEntry
+	  ;
+
+csventry : NUMBER				# GetCSVNumber
+	 | (TRUE|FALSE)				# GetCSVBool
+	 | QSTRING				# GetCSVQstr
+	 ;
+
+fragment QUOTE : '"';
+fragment ESC_QUOTE : '\\"' ;
+fragment ESC_BSLASH : '\\\\' ;
+QSTRING : QUOTE ( ~('"'|'\\')+ | ESC_QUOTE | ESC_BSLASH )* QUOTE ;
+
+TRUE    : 'true' ;
+FALSE   : 'false' ;
+
+NUMBER : DIGIT+ ;
+fragment DIGIT : [0-9] ;
+
 AS	: 'as' ;
 INT	: 'int' ;
 BOOL	: 'bool' ;
 STR	: 'string' ;
 LET	: 'let' ;
+LOAD	: 'load' ;
 CLARIFY	: 'clarify' ;
 COLON	: ':' ;
 SEMI	: ';' ;

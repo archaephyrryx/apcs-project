@@ -1,4 +1,5 @@
 import java.util.*;
+import java.io.*;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -144,5 +145,27 @@ class FirstSchemaVisitor extends SchemaBaseVisitor<Node> {
 	AliasSymbol alias = new AliasSymbol(name, sym);
 	_ctx.symtab.put(name, alias);
 	return null;
+    }
+
+    @Override
+    public Node visitLoad(SchemaParser.LoadContext ctx) {
+	String type = ctx.ID().getText();
+	CompoundSymbol sym = (CompoundSymbol) _ctx.symtab.get(type);
+	String qfile = ctx.QSTRING().getText();
+	String file = qfile.replaceAll("\\\\(.)", "\\1");
+	file = file.replaceAll("^\\\"", "");
+	file = file.replaceAll("\\\"$", "");
+	loadData(file, sym);
+	return null;
+    }
+
+    public void loadData(String filename, CompoundSymbol sym) {
+	System.out.printf("Will load %s data from %s.\n", sym.name, filename);
+	try {
+	    BufferedReader read = new BufferedReader(new FileReader(filename));
+	} catch (java.io.IOException e) {
+	    System.err.println(e);
+	    System.exit(1);
+	}
     }
 }
