@@ -1,33 +1,14 @@
-//class Engine- runs queries from Parser
+//interface  Engine- runs queries from Parser
 
-public class Engine {
+import java.util.ArrayList;
 
-    /*=====================================
-      String retrieveAll(String) -- _
-      =====================================*/
-    public static String retrieveAll(String type) {
-	return ""; //placeholder to get past compiler
-    }
+public interface Engine<T> {
 
-    /*=====================================
-      String retrieveAny(String) -- _
-      =====================================*/
-    public static String retrieveAny(String type) {
-	return ""; //placeholder to get past compiler
-    }
+    ArrayList<T> retrieveAll(Database data);
 
-    /*=====================================
-      String retrieveJust(String) -- _
-      =====================================*/
-    public static String retrieveJust(String type, int num) {
-	return ""; //placeholder to get past compiler
-    }
+    int retrieveCount(Database data);
 
-    /*=====================================
-      String retrieveOnly(String) -- _
-      =====================================*/
-    public static String retrieveOnly(String type, int num) {
-	return ""; //placeholder to get past compiler
-    }
+    ArrayList<T> retrieveType(Database data, String type);
 
-} //end class
+
+} //end interface
