@@ -154,7 +154,6 @@ class AVLNode {
 	_csv = csv;
 	_objs = new ArrayList<ArrayList<CSVEntry>>();
 	_objs.add(obj);
-
     }
  
     public int compareTo(AVLNode other) {

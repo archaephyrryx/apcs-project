@@ -1,3 +1,5 @@
 clarify int as year;
 let Book year Year, string Title, bool InPrint;
+let Song year Year, string Title, bool InItunes;
 load Book "books.dat";
+load Song "songs.dat";
