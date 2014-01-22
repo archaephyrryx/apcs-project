@@ -1,6 +1,6 @@
 ANTLR = java -jar /usr/local/lib/antlr-4.0-complete.jar
 
-SRCS	= \
+MOOSES	= \
 	   SchemaBaseListener.java \
 	   SchemaBaseVisitor.java \
 	   SchemaLexer.java \
@@ -8,7 +8,11 @@ SRCS	= \
 	   SchemaParser.java \
 	   SchemaVisitor.java
 
-OBJS = $(SRCS:%.java=%.class)
+SRCS = \
+	   Load.java \
+	   Symbol.java 
+
+OBJS = $(SRCS:%.java=%.class) $(MOOSES:%.java=%.class)
 
 .SUFFIXES: .java .class
 
@@ -20,7 +24,7 @@ all: Main.class $(OBJS)
 Main.class: Main.java $(OBJS)
 	javac Main.java
 
-$(SRCS): Schema.g4
+$(MOOSES): Schema.g4
 	$(ANTLR) -visitor Schema.g4
 
 clean:

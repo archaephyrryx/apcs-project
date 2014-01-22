@@ -38,6 +38,9 @@ ptype :
   | t=ID					# Getsym
   ;
 
+csvfile : (csvline)*
+	;
+
 csvline : csvrecord '\n' 			# GetCSVRecord
 	;
 
