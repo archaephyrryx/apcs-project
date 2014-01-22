@@ -44,22 +44,6 @@ class Context {
     }
 }
 
-class QString {
-    public String _qstring;
-
-    public QString(String qstring) {
-	_qstring = qstring;
-    }
-
-    public String unQuote() {
-	String unq = _qstring;
-	unq = unq.replaceAll("\\\\(.)", "\\1");
-	unq = unq.replaceAll("^\\\"", "");
-	unq = unq.replaceAll("\\\"$", "");
-	return unq;
-    }
-}
-
 class Node {
     public String _str;
     public Symbol _sym;
@@ -133,8 +117,7 @@ class FirstSchemaVisitor extends SchemaBaseVisitor<Node> {
     public Node visitLoad(SchemaParser.LoadContext ctx) {
 	String type = ctx.ID().getText();
 	CompoundSymbol sym = (CompoundSymbol) _ctx.symtab.get(type);
-        QString qfile = new QString(ctx.QSTRING().getText());
-	String file = qfile.unQuote();
+	String file = QString.unQuote(ctx.QSTRING().getText());
 	loadData(file, sym);
 	return null;
     }

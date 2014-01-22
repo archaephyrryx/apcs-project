@@ -1,7 +1,7 @@
 grammar Schema;
 
 schema :
-      ( command )*
+      ( command '\n' )*
     ;
 
 command :

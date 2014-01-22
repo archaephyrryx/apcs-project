@@ -9,7 +9,7 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 public class Load {
-    public static void load(Symbol datatype, String filename) {
+    public static void load(CompoundSymbol datatype, String filename) {
 	try {
 	    ANTLRInputStream input = new ANTLRFileStream(filename);
 	    SchemaLexer lexer = new SchemaLexer(input);
@@ -26,62 +26,6 @@ public class Load {
     }
 }
 
-class CSVEntry {
-    public enum EntryType { Number, Bool, String };
-    public EntryType _type;
-    public int _numberEntry;
-    public boolean _boolEntry;
-    public String _strEntry;
-
-    public CSVEntry(EntryType type, int numberEntry) {
-	_type = type;
-	_numberEntry = numberEntry;
-    }
-
-    public CSVEntry(EntryType type, boolean boolEntry) {
-	_type = type;
-	_boolEntry = boolEntry;
-    }
-
-    public CSVEntry(EntryType type, String strEntry) {
-	_type = type;
-	_strEntry = strEntry;
-    }
-}
-
-class CSVNumber extends CSVEntry {
-    public static final EntryType _type = CSVEntry.EntryType.Number;
-    public int _numberEntry;
-
-
-    public CSVNumber(int numberEntry) {
-	super(_type, numberEntry);
-	this._numberEntry = numberEntry;
-    }
-}
-
-class CSVBool extends CSVEntry {
-    public static final EntryType _type = CSVEntry.EntryType.Bool;
-    public boolean _boolEntry;
-
-    public CSVBool(boolean boolEntry) {
-	super(_type, boolEntry);
-	this._boolEntry = boolEntry;
-    }
-}
-
-class CSVQstr extends CSVEntry {
-    public static final EntryType _type = CSVEntry.EntryType.String;
-    public String _strEntry;
-
-    public CSVQstr(QString QstrEntry) { this(QstrEntry.unQuote()); }
-
-    public CSVQstr(String strEntry) {
-	super(_type, strEntry);
-	this._strEntry = strEntry;
-    }
-}
-
 class CSVNode {
     public CSVEntry _entry;
     public ArrayList<CSVEntry> _entries;
@@ -92,10 +36,9 @@ class CSVNode {
 
 
 class CSVisitor extends SchemaBaseVisitor<CSVNode> {
-    public Symbol _sym;
+    public CompoundSymbol _sym;
 
-
-    public CSVisitor( Symbol sym ) {
+    public CSVisitor( CompoundSymbol sym ) {
 	_sym = sym;
     }
 
@@ -118,15 +61,27 @@ class CSVisitor extends SchemaBaseVisitor<CSVNode> {
     @Override
     public CSVNode visitGetCSVRecord(SchemaParser.GetCSVRecordContext ctx) {
 	ArrayList<CSVEntry> csvline = visit(ctx.csvrecord())._entries;
-	// Load and store data
+	int numAttrs = _sym._attrs.size();
+	int lengthEntry = csvline.size();
+	if (numAttrs != lengthEntry) {
+	    // This should get mad
+	    // Exception, etc.
+	} else {
+	    for (int i = 0; i < numAttrs; ++i) {
+		Attribute a = _sym._attrs.get(i);
+		AVLTree t = _sym._trees.get(_sym._atIndex.get(a._name).intValue());
+		if (t != null) {
+		    t.addCSVEntry(csvline.get(i), csvline);
+		}
+	    }
+	}
 	return null;
     }
-
 
     @Override
     public CSVNode visitGetCSVQstr(SchemaParser.GetCSVQstrContext ctx) {
 	String qstr = (ctx.QSTRING()).getText();
-	CSVQstr entry = new CSVQstr(qstr);
+	CSVstr entry = new CSVstr(QString.unQuote(qstr));
 	return new CSVNode(entry);
     }
 
