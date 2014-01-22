@@ -46,6 +46,25 @@ public class AVLTree {
 	}
     }
 
+    public ArrayList<ArrayList<CSVEntry>> getObjects(CSVEntry csv) {
+	int compvalue;
+	_head = _root;
+
+	while ( _head != null ) {
+	    compvalue = csv.compareTo(_head._csv);
+
+	    if (compvalue == -1)
+		_head = _head.leftChild;
+	    if (compvalue == 0)
+		return _head._objs;
+	    if (compvalue == 1)
+		_head = _head.rightChild;
+	}
+
+	return null;
+    }
+
+
     protected int height(AVLNode head) {
 	int l = l_height(head);
 	int r = r_height(head);

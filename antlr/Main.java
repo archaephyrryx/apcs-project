@@ -25,8 +25,21 @@ public class Main {
 	    visitor.visit(tree);
 
 	    CompoundSymbol book = (CompoundSymbol) ctx.symtab.get("Book");
-	    for (Attribute a : book._attrs) {
-		System.out.println(a._name + ": " + a._type._name);
+	    Attribute year = book._attrs.get(0);
+	    AVLTree yearTree = book._trees.get(0);
+
+	    ArrayList<ArrayList<CSVEntry>> mybooks = yearTree.getObjects(new CSVNumber(2013));
+
+	    if (mybooks == null) {
+		System.out.println("No " + book._name + "s found matching criterion.");
+		return;
+	    }
+
+	    for (ArrayList<CSVEntry> a : mybooks) {
+		int s = a.size();
+		for (int i = 0; i < s; ++i) {
+		    System.out.println(book._attrs.get(i)._name + ": " + a.get(i));
+		}
 	    }
 	} catch (java.io.IOException e) {
 	    System.err.println(e);

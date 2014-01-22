@@ -45,7 +45,7 @@ csvline : csvrecord '\n' 			# GetCSVRecord
 	;
 
 csvrecord : csventry				# GetFirstCSVEntry
-          | csventry COMMA csvrecord		# GetNextCSVEntry
+          | csvrecord COMMA csventry		# GetNextCSVEntry
 	  ;
 
 csventry : v=NUMBER				# GetCSVNumber

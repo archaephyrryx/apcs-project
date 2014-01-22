@@ -20,6 +20,20 @@ class CSVEntry {
 	return 0;
     }
 
+    public String toString() {
+	if (_type == CSVEntry.EntryType.Number)
+	    return String.valueOf(_numberEntry);
+
+	if (_type == CSVEntry.EntryType.Bool)
+	    return String.valueOf(_boolEntry);
+
+	if (_type == CSVEntry.EntryType.String)
+	    return _strEntry;
+
+	return "";
+    }
+
+
     public CSVEntry(EntryType type, int numberEntry) {
 	_type = type;
 	_numberEntry = numberEntry;
