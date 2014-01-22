@@ -5,9 +5,9 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Database {
-public Object [] [] _database;
-public Object [] dataTitles;
-public Object [] dataTypes;
+protected Object [] [] _database;
+protected Object [] dataTitles;
+protected Object [] dataTypes;
 
     /*constructor
     /precondition: row matches the number of rows in the text file,
@@ -38,7 +38,15 @@ public Object [] dataTypes;
         }
     }
     
-    //postcond: prints each row of 2D integer array a on its own line
+    
+    //accessor methods  
+    public Object[][] getData() {
+        return _database;
+    }
+    
+    
+    
+    //printArr: prints each row of 2D integer array a on its own line (for testing)
     public static void printArr( Object[][] a ) {
 	    for (int r=0; r < a.length; r++) {
 	        for (int c = 0; c < a[r].length; c++ ) {
@@ -47,10 +55,11 @@ public Object [] dataTypes;
 		    System.out.println();
 	    }
     }
-    
+      
+    //main method for testing
     public static void main (String [] args) {
         Database sample = new Database("sampleData.txt", 12, 4);
         printArr(sample._database);
     }
 
-}
+} //end class

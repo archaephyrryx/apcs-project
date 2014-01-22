@@ -1,17 +1,19 @@
+//subclass EngineString
+
 import java.util.ArrayList;
 
-public class EngineString implements Engine<String> {
+public class EngineString extends Engine<String> {
 
-   public ArrayList<String> retrieveAll(Database data) {
+   public static ArrayList<String> retrieveAll(Database data, int searchCol) {
        ArrayList<String> retList = new ArrayList<String>();
        return retList;
     }
 
-   public int retrieveCount(Database data) {
-	return 0;
+    public static int retrieveCount(Database data, int searchCol) {
+	    return 0;
     }
 
-   public ArrayList<String> retrieveType(Database data, String type) {
+   public static ArrayList<String> retrieveType(Database data, int retCol, int searchCol) {
        ArrayList<String> retList = new ArrayList<String>();
        return retList;
     }

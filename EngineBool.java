@@ -1,18 +1,21 @@
+//subclass EngineBool
+
 import java.util.ArrayList;
 
-public class EngineBool implements Engine<Boolean> {
+public class EngineBool extends Engine<Boolean> {
 
-    public ArrayList<Boolean> retrieveAll(Database data) {
-       ArrayList<Boolean> retList = new ArrayList<Boolean>();
-       return retList;
+
+    public static ArrayList<Boolean> retrieveAll(Database data, int searchCol) {
+        ArrayList<Boolean> retList = new ArrayList<Boolean>();
+        return retList;
     }
 
-   public int retrieveCount(Database data) {
-	   return 0;
-   }
+    public static int retrieveCount(Database data, int searchCol) {
+	    return 0;
+    }
 
-   public ArrayList<Boolean> retrieveType(Database data, String type) {
-       ArrayList<Boolean> retList = new ArrayList<Boolean>();
-       return retList;
-   }
+    public static ArrayList<Boolean> retrieveType(Database data, int retCol, int searchCol) {
+        ArrayList<Boolean> retList = new ArrayList<Boolean>();
+        return retList;
+    }
 }
