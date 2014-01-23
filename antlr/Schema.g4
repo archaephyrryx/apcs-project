@@ -8,7 +8,26 @@ command :
     letblock
   | clarifyblock
   | loadcmd
+  | querycmd
   ;
+
+querycmd: GET ID matchlist (PERIOD|SEMI)		#PerformQuery
+     ;
+
+matchlist : match					#GetFirstMatch
+	  | matchlist (COMMA) match			#GetNextMatch
+	  ;
+
+match : ID comp value					#EvalMatch
+      ;
+
+comp : EQUALS						#EqualTo
+     ;
+
+value : v=NUMBER					#EvalNumberValue
+      | v=(TRUE|FALSE)					#EvalBoolValue
+      | v=QSTRING					#EvalQStringValue
+      ;
 
 clarifyblock :
     CLARIFY ptype AS ID (PERIOD|SEMI)           #ClarifyType
@@ -64,6 +83,7 @@ FALSE   : 'false' ;
 NUMBER : DIGIT+ ;
 fragment DIGIT : [0-9] ;
 
+GET     : 'get' ;
 AS	: 'as' ;
 INT	: 'int' ;
 BOOL	: 'bool' ;
@@ -75,6 +95,7 @@ COLON	: ':' ;
 SEMI	: ';' ;
 PERIOD	: '.' ;
 COMMA	: ',' ;
+EQUALS :  '=' ;
 
 ID : [A-Za-z] [A-Za-z0-9]* ;
 WS : [ \t\n\r]+ -> skip ;

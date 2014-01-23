@@ -12,7 +12,8 @@ SRCS = \
 	QString.java \
 	CSVEntry.java \
 	Symbol.java \
-	AVLTree.java
+	AVLTree.java \
+	Query.java
 
 OBJS = $(SRCS:%.java=%.class) $(MOOSES:%.java=%.class)
 
@@ -26,7 +27,7 @@ all: Main.class $(OBJS)
 Load.class: Load.java $(OBJS)
 	javac Load.java
 
-Main.class: Main.java Load.class
+Main.class: Main.java Load.class Query.class
 	javac Main.java
 
 $(MOOSES): Schema.g4
