@@ -69,9 +69,10 @@ class CSVisitor extends SchemaBaseVisitor<CSVNode> {
 	} else {
 	    for (int i = 0; i < numAttrs; ++i) {
 		Attribute a = _sym._attrs.get(i);
-		AVLTree t = _sym._trees.get(_sym._atIndex.get(a._name).intValue());
+		AVLTree t = _sym._trees.get(i);
 		if (t != null) {
 		    t.addCSVEntry(csvline.get(i), csvline);
+		    //System.out.println("Added entry!");
 		}
 	    }
 	}

@@ -17,31 +17,34 @@ public class AVLTree {
 	_head = _root;
 	int compvalue;
 
-	while (true) {
+	while (_head != null) {
 	    compvalue = csv.compareTo(_head._csv);
+
 	    if (compvalue == 0) {
 		_head.addObject( obj );
-		break;
+		return;
 	    }
 
-	    if (compvalue == 1) {
+	    if (compvalue > 0) {
 		if (_head.rightChild == null) {
 		    _head.rightChild = new AVLNode(csv, obj);
 		    _head.rightChild.parent = _head;
-		    this.rebalance(_head.rightChild);
-		    break;
+//		    this.rebalance(_head.rightChild);
+		    return;
 		}
 		_head = _head.rightChild;
+		continue;
 	    }
 
-	    if (compvalue == -1)  {
+	    if (compvalue < 0)  {
 		if (_head.leftChild == null) {
 		    _head.leftChild = new AVLNode(csv, obj);
-		    _head.rightChild.parent = _head;
-		    this.rebalance(_head.leftChild);
-		    break;
+		    _head.leftChild.parent = _head;
+//		    this.rebalance(_head.leftChild);
+		    return;
 		}
 		_head = _head.leftChild;
+		continue;
 	    }
 	}
     }
@@ -53,14 +56,13 @@ public class AVLTree {
 	while ( _head != null ) {
 	    compvalue = csv.compareTo(_head._csv);
 
-	    if (compvalue == -1)
+	    if (compvalue < 0)
 		_head = _head.leftChild;
 	    if (compvalue == 0)
 		return _head._objs;
-	    if (compvalue == 1)
+	    if (compvalue > 0)
 		_head = _head.rightChild;
 	}
-
 	return null;
     }
 
@@ -106,18 +108,21 @@ public class AVLTree {
 	AVLNode root, pivot, wedge;
 
 	root = node;
-	pivot = root.disownLeft();
-	wedge = pivot.disownRight();
-
-	root.adoptLeft(wedge);
-
-	if (root.parent != null) {
-	    if (root.relation() == 1)
-		root.parent.swapRight(pivot);
-	    else
-		root.parent.swapLeft(pivot);
+	if (root.leftChild != null){ 
+	    pivot = root.disownLeft();
+	    if (pivot.rightChild != null) {
+		wedge = pivot.disownRight();
+		root.adoptLeft(wedge);
+		if (root.parent != null) {
+		    if (root.relation() == 1)
+			root.parent.swapRight(pivot);
+		    else
+			root.parent.swapLeft(pivot);
+		} else 
+		    _root = pivot;
+		pivot.adoptRight(root);
+	    }
 	}
-	pivot.adoptRight(root);
 
     }
  
@@ -125,19 +130,21 @@ public class AVLTree {
 	AVLNode root, pivot, wedge;
 
 	root = node;
-	pivot = root.disownRight();
-	wedge = pivot.disownLeft();
-
-	root.adoptRight(wedge);
-
-	if (root.parent != null) {
-	    if (root.relation() == 1)
-		root.parent.swapRight(pivot);
-	    else
-		root.parent.swapLeft(pivot);
+	if (root.rightChild != null) { 
+	    pivot = root.disownRight();
+	    if (pivot.leftChild != null) {
+		wedge = pivot.disownLeft();
+		root.adoptRight(wedge);
+		if (root.parent != null) {
+		    if (root.relation() == 1)
+			root.parent.swapRight(pivot);
+		    else
+			root.parent.swapLeft(pivot);
+		} else 
+		    _root = pivot;
+		pivot.adoptLeft(root);
+	    }
 	}
-
-	pivot.adoptLeft(root);
     }
 
 }

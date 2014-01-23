@@ -8,31 +8,12 @@ class CSVEntry {
     public String _strEntry;
 
     public int compareTo(CSVEntry other) {
-	if (_type == CSVEntry.EntryType.Number)
-	    return (new Integer(this._numberEntry).compareTo(new Integer(other._numberEntry)));
-
-	if (_type == CSVEntry.EntryType.Bool)
-	    return (new Boolean(this._boolEntry).compareTo(new Boolean(other._boolEntry)));
-
-	if (_type == CSVEntry.EntryType.String)
-	    return (this._strEntry.compareTo(other._strEntry));
-
 	return 0;
     }
 
     public String toString() {
-	if (_type == CSVEntry.EntryType.Number)
-	    return String.valueOf(_numberEntry);
-
-	if (_type == CSVEntry.EntryType.Bool)
-	    return String.valueOf(_boolEntry);
-
-	if (_type == CSVEntry.EntryType.String)
-	    return _strEntry;
-
-	return "";
+	return "This Should Be Overwritten";
     }
-
 
     public CSVEntry(EntryType type, int numberEntry) {
 	_type = type;
@@ -58,6 +39,22 @@ class CSVNumber extends CSVEntry {
 	super(_type, numberEntry);
 	this._numberEntry = numberEntry;
     }
+    
+    @Override
+    public int compareTo(CSVEntry other) {
+	if (other instanceof CSVNumber) {
+	    return (this._numberEntry - other._numberEntry);
+	} else {
+	    // Error
+	    System.err.println("Cannot compare different types of CSVEntry");
+	    return 0;
+	}
+    }
+
+    @Override
+    public String toString() {
+	return String.valueOf(_numberEntry);
+    }
 }
 
 class CSVBool extends CSVEntry {
@@ -68,6 +65,22 @@ class CSVBool extends CSVEntry {
 	super(_type, boolEntry);
 	this._boolEntry = boolEntry;
     }
+
+    @Override
+    public int compareTo(CSVEntry other) {
+	if (other instanceof CSVBool) {
+	    return ((this._boolEntry == other._boolEntry) ? 0 : (this._boolEntry) ? 1 : -1);
+	} else {
+	    // Error
+	    System.err.println("Cannot compare different types of CSVEntry");
+	    return 0;
+	}
+    }
+
+    @Override
+    public String toString() {
+	return String.valueOf(_boolEntry);
+    }
 }
 
 class CSVstr extends CSVEntry {
@@ -77,5 +90,21 @@ class CSVstr extends CSVEntry {
     public CSVstr(String strEntry) {
 	super(_type, strEntry);
 	this._strEntry = strEntry;
+    }
+ 
+    @Override
+    public int compareTo(CSVEntry other) {
+	if (other instanceof CSVstr) {
+	    return this._strEntry.compareTo(other._strEntry);
+	} else {
+	    // Error
+	    System.err.println("Cannot compare different types of CSVEntry");
+	    return 0;
+	}
+    }
+
+    @Override
+    public String toString() {
+	return _strEntry;
     }
 }
