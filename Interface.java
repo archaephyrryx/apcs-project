@@ -12,13 +12,16 @@ public class Interface {
 	
 	Parser sampleQuery = new Parser(sample, query);	
 	sampleQuery.printArray(sampleQuery.getQuery());
-	System.out.println(sampleQuery.getQuery()[4]);
+	//System.out.println(sampleQuery.getQuery()[4]);
 	sampleQuery.parseQuery();
 	
 	/*sample queries to run:
 	retrieve count from sample ;
 	retrieve Title from sample ;
 	retrieve Year from sample ;
+	retrieve Title from sample where Author = "Jose Luis Borges"
+	retrieve count from sample where Genre = Fiction
+	retrieve all from sample where Title = Hamlet
 	*/
     }
 

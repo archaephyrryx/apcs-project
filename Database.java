@@ -43,8 +43,7 @@ protected Object [] dataTypes;
     public Object[][] getData() {
         return _database;
     }
-    
-    
+ 
     
     //printArr: prints each row of 2D integer array a on its own line (for testing)
     public static void printArr( Object[][] a ) {
