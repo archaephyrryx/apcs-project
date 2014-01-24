@@ -1,0 +1,54 @@
+DEVELOPMENT LOG
+
+Journal
+
+2014-01-07
+Created project proposal.
+
+2014-01-09
+Planned java classes to create. Discussed creating a tree for more efficent searches.
+Peter started writing a wiki describing the query grammar.
+
+2014-01-10
+Continued planning. 
+
+2014-01-14
+Created sample database for testing.
+
+2014-01-16
+Began work on Interface and Parser.
+
+2014-01-17
+Continued work on Interface and Parser, created Engine.
+
+2014-01-21
+Projects diverged. Peter began working on a query language implementation using antlr, Lydia continued to create a Parser and Engine from scratch.
+Created Database to store databases.
+
+2014-01-22
+Got EngineGen and EngineString working.
+
+2014-01-23
+Got EngineNum working. Created new sammple database. Put final touches on project, commented code.
+
+
+Obstacles Overcome
+Dealing with columns/strings in the query written by the user with multiple words and not having the words be split up into different elements of the query array. Resolved by consulting Stack Overflow.
+Finding a way to deal with comparison operators that did not involve writing the same code over and over again for "=", "<", "<=", etc. Resolved by creating a function to parse these.
+
+Unresolved Issues
+Dealing with errors in query input.
+Expanding query language to be able to return multiple specified columns at once and to handle multiple conditions (could be implemented with more time).
+Creating larger sample databases.
+
+Cool Stuff Learned
+How to split strings into arrays
+How to read in files
+Exceptions handling
+
+Mid-Development Design Changes
+At first EngineGen.java was going to be an interface, which changed to a superclass, which changed to a regular class.
+There was going to be a class EngineBool.java but the functionality planned for it was already covered in EngineString.java.
+
+Lessons Learned
+Plan for code to as general as possible so it is easier to add functionality later on.
