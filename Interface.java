@@ -5,7 +5,7 @@ import cs1.Keyboard;
 public class Interface {
              
     /*sample queries to run:
-    (to run all at once, enter in Terminal: cat queries.txt | java Interface)
+    (to run all at once, enter in command line: cat queries.txt | java Interface)
     Using EngineGen:
     retrieve all from Book ;
     retrieve count from Book ;

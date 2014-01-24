@@ -1,4 +1,4 @@
-//class EngineNum- runs queries from Parser involving comparison of numbers
+//class EngineNum- runs queries from Parser involving conditions dealing with numbers
 
 import java.util.ArrayList;
 

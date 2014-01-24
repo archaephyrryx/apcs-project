@@ -1,10 +1,10 @@
-This project is a simple database query language that allows users to search a database by specifying conditions.
+This project is a simple database query language that allows users to search a database while specifying conditions.
 To run the project, run Interface.java and enter the sample queries specified in the file.
 Sample queries are also specified in queries.txt.
 
 **Using the Language**
-The query language searches databases of a given format. The standard format for a database is a txt file of comma-separated rows, with one entry on each row:
-The first row contains titles of columns, and the second row contains the type of each column, so far, either String or Num. For example:
+The query language searches databases of a given format. The standard format for a database is a txt file of comma-separated rows, with one entry in each row.
+The first row contains titles of columns, and the second row contains the type of each column, either String or Num. For example:
 Title,Author,Year,Genre
 String,String,Num,String
 
@@ -17,28 +17,33 @@ ex. retrieve Title from Book ;
 OR
 retrieve Artist from Song where Genre = Pop ;
 
-See Interface.java or queries.txt for more sammple queries.
+(Note that there is a space between the last word and the semicolon.)
+
+See Interface.java or queries.txt for more sample queries.
 
 **Breakdown by Keyword**
 There are three choices for returnType:
-
-"all": returns the full row for an entry satisfying a given condition
+"all": returns the full row of information for an entry satisfying a given condition
 "count": returns the number of entries satisfying a given condition
 <columnTitle> (ex. "Author"): returns all rows under the specified columnTitle satisfying a given condition. If it has multiple words, it must be contained in double quotes.
 
-<database>: the name of the database. Ones included are Book and Song.
+<database>: the name of the database. Included databases are Book and Song.
 
-<columnTitle>: the name of the column involving the condition the user wants to search for. If it has multiple words, it must be contained in double quotes.
+<columnTitle>: the name of the column involved in the condition the user wants to search for. If it has multiple words, it must be contained in double quotes.
 
 <operator>: for Strings, = or !=
             for Nums, =, !=, <, >, <=, or >=
+            
 <searchObj> (ex. 1960 or "The Beatles"): the String or number the user wants to search for. If it has multiple words, it must be contained in double quotes.
 
 ; is the standard format for ending queries.
 
 
-**Limits on the Query Language**
-Currently, the query language allows the user to return all, count, or exactly one column title to return, and exactly one condition. This language can be expanded in the future to allow the return of multiple column titles and the specificiation of multiple conditions: for example: retrieve Title,Artist from Song where Time > 4 && Genre = Rock
+**Limits of the Query Language**
+Currently, the query language can return all, count, or exactly one column title, with the user having specified at most one condition. This language can be expanded in the future to make it possible to return multiple column titles and to allow specification of multiple conditions.
+For example, a future query might look like: retrieve Title,Artist from Song where Time > 4 && Genre = Rock
+
+Note that Time in the Song database is currently written as something like "3.21". This is a bit misleading, as this refers to 3 minutes 21 seconds, not 3.21 minutes. 
 
 **Java Files**
 

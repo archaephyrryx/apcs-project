@@ -6,7 +6,7 @@ Journal
 Created project proposal.
 
 2014-01-09
-Planned java classes to create. Discussed creating a tree for more efficent searches.
+Planned java classes to create. Discussed creating a tree for more efficient searches.
 Peter started writing a wiki describing the query grammar.
 
 2014-01-10
@@ -19,25 +19,25 @@ Created sample database for testing.
 Began work on Interface and Parser.
 
 2014-01-17
-Continued work on Interface and Parser, created Engine.
+Continued work on Interface and Parser, began work on Engine.
 
 2014-01-21
-Projects diverged. Peter began working on a query language implementation using antlr, Lydia continued to create a Parser and Engine from scratch.
+Projects diverged. Peter began working on a query language implementation using antlr, Lydia continued to work on creating a parser and engine from scratch.
 Created Database to store databases.
 
 2014-01-22
 Got EngineGen and EngineString working.
 
 2014-01-23
-Got EngineNum working. Created new sammple database. Put final touches on project, commented code.
+Got EngineNum working. Created new sample database. Put final touches on project, commented code.
 
 
 Obstacles Overcome
-Dealing with columns/strings in the query written by the user with multiple words and not having the words be split up into different elements of the query array. Resolved by consulting Stack Overflow.
-Finding a way to deal with comparison operators that did not involve writing the same code over and over again for "=", "<", "<=", etc. Resolved by creating a function to parse these.
+Not having multiple-word phrases entered by user being split up into different elements of the query array. Resolved by consulting Stack Overflow.
+Finding a way to deal with comparison operators that did not involve writing the same code over and over again for "=", "<", "<=", etc. Resolved by creating a function to parse these operators.
 
 Unresolved Issues
-Dealing with errors in query input.
+Dealing with errors in query input (i.e. returning a specific and helpful error message to the user).
 Expanding query language to be able to return multiple specified columns at once and to handle multiple conditions (could be implemented with more time).
 Creating larger sample databases.
 
@@ -47,8 +47,9 @@ How to read in files
 Exceptions handling
 
 Mid-Development Design Changes
-At first EngineGen.java was going to be an interface, which changed to a superclass, which changed to a regular class.
-There was going to be a class EngineBool.java but the functionality planned for it was already covered in EngineString.java.
+At first EngineGen.java was going to be an interface, but then it seemed more useful as a superclass, and finally it became a regular class of its own.
+There was going to be a class EngineBool.java but the functionality planned for it was already covered by EngineString.java.
 
 Lessons Learned
 Plan for code to as general as possible so it is easier to add functionality later on.
+Make a clear plan at the beginning of who is doing what and how everything is going to fit together.

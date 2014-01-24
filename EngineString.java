@@ -1,4 +1,4 @@
-//class EngineString- runs queries from Parser involving exact matches of Strings 
+//class EngineString- runs queries from Parser involving conditions dealing with Strings (exact matches only)
 
 import java.util.ArrayList;
 

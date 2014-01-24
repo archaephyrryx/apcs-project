@@ -1,4 +1,4 @@
-//class Parser- interprets user queries to interface
+//class Parser- interprets user queries from interface
 
 public class Parser {
 
@@ -41,11 +41,11 @@ public class Parser {
 	
 	        //zeroeth element must be "retrieve"
             if (! ((String)_query[0]).equals("retrieve")) {
-                System.out.println("invalid input: retrieve");
+                System.out.println("invalid query");
 		    break;
             }
             
-            //first element indicates what user wants returned: "all", "count", or <column title>
+            //first element indicates what user wants returned: "all", "count", or <columnTitle>
             String strCol = (String)_query[1];
             
             //if user inputs column title, find associated column number
@@ -61,14 +61,14 @@ public class Parser {
             
             //second element must be "from"
             if (!_query[2].equals("from")) {
-                System.out.println("invalid input: from");
+                System.out.println("invalid query");
 	            break;
             }
             
             //third element indicates database name (taken care of in constructor)
             //fourth element must be "where" or ";"
             if (!_query[4].equals("where") && !_query[4].equals(";")) {
-                System.out.println("invalid input: where/;");
+                System.out.println("invalid query");
 	            break;
             }
             
@@ -78,7 +78,7 @@ public class Parser {
 	            break;
             }
            
-           //if fourth element is ";", continue query
+           //if fourth element is "where", continue query
            else if (_query[4].equals("where")) {
                 //set searchCol to the column number associated with the column title in the user's query
                 String colName = _query[5];
@@ -96,7 +96,7 @@ public class Parser {
                 //searchObj is the string/number/etc. the user is interested in
                 Object searchObj = _query[7];
 
-                //if the query deals with numbers, use EngineNum
+                //if the query deals with numbers(ints, doubles, etc.), use EngineNum
                 if (_database._dataTypes[searchCol].equals("Num") && _query[8].equals(";")) {
 		            EngineNum.execute(_database, strCol, retCol, searchCol, operator, searchObj);
 		            break;
