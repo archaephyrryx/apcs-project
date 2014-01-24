@@ -17,8 +17,8 @@ public class Interface {
     retrieve Artist from Song where Genre = Pop ;
 
     Using EngineNum:
-    retrieve all from Song where Time > 4 ;
-    retrieve count from Book where Year < 1950 ;
+    retrieve all from Song where Time >= 4.12 ;
+    retrieve count from Book where Year = 1941 ;
     retrieve Title from Song where Time < 3.5 ;
     */
 
