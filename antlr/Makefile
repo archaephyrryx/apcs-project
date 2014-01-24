@@ -10,10 +10,10 @@ MOOSES	= \
 
 SRCS = \
 	QString.java \
-	CSVEntry.java \
 	Symbol.java \
 	AVLTree.java \
-	Query.java
+	Entry.java
+
 
 OBJS = $(SRCS:%.java=%.class) $(MOOSES:%.java=%.class)
 
@@ -27,8 +27,12 @@ all: Main.class $(OBJS)
 Load.class: Load.java $(OBJS)
 	javac Load.java
 
+Query.class: Query.java $(OBJS)
+	javac Query.java
+
 Main.class: Main.java Load.class Query.class
 	javac Main.java
+
 
 $(MOOSES): Schema.g4
 	$(ANTLR) -visitor Schema.g4

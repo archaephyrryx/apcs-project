@@ -1,75 +1,71 @@
+import java.io.*;
 import java.util.*;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.ANTLRFileStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 public class Query {
+    public static void query(CompoundSymbol datatype, String filename) {
+	try {
+	    ANTLRInputStream input = new ANTLRFileStream(filename);
+	    SchemaLexer lexer = new SchemaLexer(input);
+	    CommonTokenStream tokens = new CommonTokenStream(lexer);
+	    SchemaParser parser = new SchemaParser(tokens);
 
+	    ParserRuleContext tree = parser.queryfile();
+	    QueryVisitor visitor = new QueryVisitor(datatype);
+	    visitor.visit(tree);
+	} catch (java.io.IOException e) {
+	    System.err.println(e);
+	}
+    }
 }
-
 
 class Constraint {
-    public enum ValueType { Number, Bool, String };
-    public ValueType _type;
-    public int _numberValue;
-    public boolean _boolValue;
-    public String _strValue;
+    public enum Comparison { Equals };
+    public Attribute _attr;
+    public Comparison _comp;
+    public Entry _value;
 
-    public Constraint(ValueType type, int numberValue) {
-	_type = type;
-	_numberValue = numberValue;
-    }
 
-    public Constraint(ValueType type, boolean boolValue) {
-	_type = type;
-	_boolValue = boolValue;
-    }
+    public Constraint( Attribute attr, Comparison comp, Entry value ) {
+	Symbol.Type attrType = attr.getActualType();
+	Entry.Type valueType = value.getType();
 
-    public Constraint(ValueType type, String strValue) {
-	_type = type;
-	_strValue = strValue;
-    }
-}
+	if ((attrType == Symbol.Type.IntType && valueType == Entry.Type.Number) ||
+	    (attrType == Symbol.Type.BoolType && valueType == Entry.Type.Bool) ||
+	    (attrType == Symbol.Type.StrType && valueType == Entry.Type.String)) {
 
-class NumberConstraint extends Constraint {
-    public static final ValueType _type = Constraint.ValueType.Number;
-    public int _numberValue;
-
-    public NumberConstraint(int numberValue) {
-	super(_type, numberValue);
-	this._numberValue = numberValue;
+	    _attr = attr;
+	    _comp = comp;
+	    _value = value;
+	}
+	else {
+	    // Type exception
+	}
     }
 }
 
-class BoolConstraint extends Constraint {
-    public static final ValueType _type = Constraint.ValueType.Bool;
-    public boolean _boolValue;
 
-    public BoolConstraint(boolean boolValue) {
-	super(_type, boolValue);
-	this._boolValue = boolValue;
-    }
-}
-
-class StringConstraint extends Constraint {
-    public static final ValueType _type = Constraint.ValueType.String;
-    public String _strValue;
-
-    public StringConstraint(String strValue) {
-	super(_type, strValue);
-	this._strValue = strValue;
-    }
-}
-
-class ConstraintNode {
+class QNode {
+    public Entry _value;
     public Constraint _constraint;
     public ArrayList<Constraint> _constraints;
-    public AtomSymbol _atomsym;
+    public Attribute _attr;
+    public Constraint.Comparison _comp;
 
-    public ConstraintNode(Constraint constraint) { _constraint = constraint; }
-    public ConstraintNode(ArrayList<Constraint> constraints) { _constraints = constraints; }
-    public ConstraintNode(AtomSymbol atomsym) { _atomsym = atomsym; }
+    public QNode(Entry value) { _value = value; }
+    public QNode(Constraint constraint) { _constraint = constraint; }
+    public QNode(ArrayList<Constraint> constraints) { _constraints = constraints; }
+    public QNode(Attribute attr) { _attr = attr; }
+    public QNode(Constraint.Comparison comp) { _comp = comp; }
 }
 
 
-class QueryVisitor extends SchemaBaseVisitor<ConstraintNode> {
+class QueryVisitor extends SchemaBaseVisitor<QNode> {
     public CompoundSymbol _sym;
 
     public QueryVisitor( CompoundSymbol sym ) {
@@ -77,60 +73,164 @@ class QueryVisitor extends SchemaBaseVisitor<ConstraintNode> {
     }
 
     @Override
-	public ConstraintNode visitEvalMatch(SchemaParser.EvalMatchContext ctx) { 
+    public QNode visitGetQuery(SchemaParser.GetQueryContext ctx) {
+	ArrayList<Constraint> cons = visit(ctx.constraints())._constraints;
+	ArrayList<ArrayList<Entry>> matches = initialize(cons);
+
+	for (Constraint current : cons) {
+	    filter(matches, current);
+	}
+
+	printOut(matches);
+
+	return null;
+    }
+
+
+    public ArrayList<ArrayList<Entry>> initialize(ArrayList<Constraint> cons) {
+	ArrayList<ArrayList<Entry>> matches;
+	for (Constraint current : cons) {
+	    if (current._attr.getActualType() == Symbol.Type.StrType) {
+		matches = findMatch(current);
+		return matches;
+	    }
+	}
+	for (Constraint current : cons) {
+	    if (current._attr.getActualType() == Symbol.Type.IntType) {
+		matches = findMatch(current);
+		return matches;
+	    }
+	}
+	for (Constraint current : cons) {
+	    if (current._attr.getActualType() == Symbol.Type.BoolType) {
+		matches = findMatch(current);
+		return matches;
+	    }
+	}
+	return null;
+    }
+
+
+
+
+
+    public void printOut(ArrayList<ArrayList<Entry>> matches) {
+
+	System.out.printf("Successfully found %d %ss meeting criterion-set.\n\n", matches.size(), _sym._name);
+	int i = 0;
+	for (ArrayList<Entry> a : matches) {
+	    System.out.printf("Match #%d:\n", (++i));
+	    int s = a.size();
+	    for (int j = 0; j < s; ++j) {
+		System.out.printf("\t%s: %s\n", _sym._attrs.get(j)._name, a.get(j).toString());
+	    }
+	    System.out.println();
+	}
+    }
+
+    public ArrayList<ArrayList<Entry>> findMatch(Constraint con) {
+	Attribute attr = con._attr;
+	Entry val = con._value;
+	Constraint.Comparison comp = con._comp;
+	if (con._attr.getActualType() == Symbol.Type.BoolType) {
+	    return getAll();
+	} else {
+	    AVLTree tree = _sym._trees.get(_sym._atIndex.get(attr._name).intValue());
+
+	    if (comp == Constraint.Comparison.Equals) {
+		return tree.getObjects(val);
+	    } 
+	}
+	return null;
+    }
+
+    public ArrayList<ArrayList<Entry>> getAll() {
+	int numAttrs = _sym._attrs.size();
+
+	for (int i = 0; i < numAttrs; ++i) {
+	    Attribute attr = _sym._attrs.get(i);
+	    if (attr.getActualType() != Symbol.Type.BoolType) {
+		return _sym._trees.get(i).getAll();
+	    }
+	}
+	return null;
+    }
+
+    public void filter(ArrayList<ArrayList<Entry>> pool, Constraint con) {
+	ArrayList<ArrayList<Entry>> newpool = new ArrayList<ArrayList<Entry>>();
+
+	for (ArrayList<Entry> obj : pool) {
+	   if (testConstraint(obj, con)) {
+	       newpool.add(obj);
+	   }
+	}
+
+	pool = newpool;
+    }
+
+    public boolean testConstraint(ArrayList<Entry> obj, Constraint con) {
+	Attribute attr = con._attr;
+	Constraint.Comparison comp = con._comp;
+	int index = _sym._atIndex.get(attr._name).intValue();
+	Entry val = con._value;
+	Entry objval = obj.get(index);
+
+	if (comp == Constraint.Comparison.Equals) {
+	    return (objval == val);
+	}
+
+	return true;
+    }
+
+
+    @Override
+	public QNode visitEvalConstraint(SchemaParser.EvalConstraintContext ctx) { 
 	    String attrname = (ctx.ID()).getText();
-	    int index = _sym._atIndex.get(attrname).intValue();
-	    Attribute attr = _sym._attrs.get(index);
-	    Constraint con = visit(ctx.ID()).getText();
+	    Attribute attr = _sym._attrs.get(_sym._atIndex.get(attrname));
+	    Constraint.Comparison comp = visit(ctx.comp())._comp;
+	    Entry val = visit(ctx.value())._value;
+	    return new QNode(new Constraint(attr, comp, val));
 	}
 
     @Override
-	public ConstraintNode visitPerformQuery(SchemaParser.PerformQueryContext ctx) {
+	public QNode visitEqualTo(SchemaParser.EqualToContext ctx) {
+	    return new QNode(Constraint.Comparison.Equals);
 	}
 
     @Override
-	public ConstraintNode visitGetsym(SchemaParser.GetsymContext ctx) {
-	}
-
-    @Override
-	public ConstraintNode visitEqualTo(SchemaParser.EqualToContext ctx) {
-	}
-
-    @Override
-	public ConstraintNode visitGetFirstMatch(SchemaParser.GetFirstMatchContext ctx) {
-	    Constraint c = visit(ctx.match())._constraint;
+	public QNode visitGetFirstConstraint(SchemaParser.GetFirstConstraintContext ctx) {
+	    Constraint c = visit(ctx.constraint())._constraint;
 	    ArrayList<Constraint> constraints = new ArrayList<Constraint>();
 	    constraints.add(c);
-	    return new ConstraintNode(constraints);
+	    return new QNode(constraints);
 	}
 
     @Override
-	public ConstraintNode visitGetNextMatch(SchemaParser.GetNextMatchContext ctx) {
-	    Constraint c = visit(ctx.match())._constraint;
-	    ArrayList<Constraint> constraints = visit(ctx.matchlist())._constraints;
+	public QNode visitGetNextConstraint(SchemaParser.GetNextConstraintContext ctx) {
+	    Constraint c = visit(ctx.constraint())._constraint;
+	    ArrayList<Constraint> constraints = visit(ctx.constraints())._constraints;
 	    constraints.add(c);
-	    return new ConstraintNode(constraints);
+	    return new QNode(constraints);
 	}
 
     @Override
-	public ConstraintNode visitEvalNumberValue(SchemaParser.EvalNumerValueContext ctx) {
+	public QNode visitEvalNumberValue(SchemaParser.EvalNumberValueContext ctx) {
 	    int number = new Integer((ctx.NUMBER()).getText()).intValue();
-	    NumberConstraint constraint = new NumberConstraint(number);
-	    return new ConstraintNode(constraint);
+	    NumberEntry val = new NumberEntry(number);
+	    return new QNode(val);
 	}
 
     @Override
-	public ConstraintNode visitEvalQStringValue(SchemaParser.EvalQStringValueContext ctx) {
+	public QNode visitEvalQStringValue(SchemaParser.EvalQStringValueContext ctx) {
 	    String qstr = (ctx.QSTRING()).getText();
-	    StringConstraint constraint = new StringConstraint(QString.unQuote(qstr));
-	    return new ConstraintNode(constraint);
-
+	    StringEntry val = new StringEntry(QString.unQuote(qstr));
+	    return new QNode(val);
 	}
 
     @Override 
-	public ConstraintNode visitEvalBoolValue(SchemaParser.EvalBoolValueContext ctx) { 
+	public QNode visitEvalBoolValue(SchemaParser.EvalBoolValueContext ctx) { 
 	    boolean bool = new Boolean((ctx.v).getText()).booleanValue();
-	    BoolConstraint constraint = new BoolConstraint(bool);
-	    return new ConstraintNode(constraint);
+	    BoolEntry val = new BoolEntry(bool);
+	    return new QNode(val);
 	}
 }

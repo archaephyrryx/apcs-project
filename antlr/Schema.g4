@@ -2,7 +2,7 @@ grammar Schema;
 
 schema :
       ( command '\n' )*
-    ;
+      ;
 
 command :
     letblock
@@ -11,14 +11,21 @@ command :
   | querycmd
   ;
 
-querycmd: GET ID matchlist (PERIOD|SEMI)		#PerformQuery
+querycmd: GET ID QSTRING (PERIOD|SEMI)			#Query
      ;
 
-matchlist : match					#GetFirstMatch
-	  | matchlist (COMMA) match			#GetNextMatch
+queryfile : (queryline)*
 	  ;
 
-match : ID comp value					#EvalMatch
+queryline : constraints (SEMI|PERIOD) '\n'		#GetQuery
+	  ;
+
+
+constraints : constraint				#GetFirstConstraint
+	    | constraints COMMA constraint		#GetNextConstraint
+	    ;
+
+constraint : ID comp value				#EvalConstraint
       ;
 
 comp : EQUALS						#EqualTo
@@ -34,7 +41,7 @@ clarifyblock :
   ;
 
 letblock :
-    LET ID proplist (PERIOD|SEMI)		# LetType
+    LET ID proplist (PERIOD|SEMI)		#LetType
     ;
 
 loadcmd :

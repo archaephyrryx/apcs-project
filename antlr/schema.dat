@@ -1,3 +1,4 @@
 clarify int as year;
 let Book year Year, string Title, bool InPrint;
 load Book "books.dat";
+get Book "query.dat";

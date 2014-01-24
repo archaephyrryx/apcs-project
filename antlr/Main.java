@@ -23,24 +23,6 @@ public class Main {
 	    Context ctx = new Context();
 	    FirstSchemaVisitor visitor = new FirstSchemaVisitor(ctx);
 	    visitor.visit(tree);
-
-	    CompoundSymbol book = (CompoundSymbol) ctx.symtab.get("Book");
-	    Attribute year = book._attrs.get(0);
-	    AVLTree yearTree = book._trees.get(0);
-
-	    ArrayList<ArrayList<CSVEntry>> mybooks = yearTree.getObjects(new CSVNumber(2013));
-
-	    if (mybooks == null) {
-		System.out.println("No " + book._name + "s found matching criterion.");
-		return;
-	    }
-
-	    for (ArrayList<CSVEntry> a : mybooks) {
-		int s = a.size();
-		for (int i = 0; i < s; ++i) {
-		    System.out.println(book._attrs.get(i)._name + ": " + a.get(i));
-		}
-	    }
 	} catch (java.io.IOException e) {
 	    System.err.println(e);
 	}
@@ -133,6 +115,20 @@ class FirstSchemaVisitor extends SchemaBaseVisitor<Node> {
 	String file = QString.unQuote(ctx.QSTRING().getText());
 	loadData(file, sym);
 	return null;
+    }
+
+    @Override
+    public Node visitQuery(SchemaParser.QueryContext ctx) {
+	String type = ctx.ID().getText();
+	CompoundSymbol sym = (CompoundSymbol) _ctx.symtab.get(type);
+	String file = QString.unQuote(ctx.QSTRING().getText());
+	loadQuery(file, sym);
+	return null;
+    }
+
+    public void loadQuery(String filename, CompoundSymbol sym) {
+	System.out.printf("Will perform %s queries in %s.\n", sym._name, filename);
+	Query.query(sym, filename);
     }
 
     public void loadData(String filename, CompoundSymbol sym) {

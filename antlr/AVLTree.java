@@ -8,7 +8,7 @@ public class AVLTree {
 	_root = null;
     }
 
-    public void addCSVEntry( CSVEntry csv, ArrayList<CSVEntry> obj  ) {
+    public void addEntry( Entry csv, ArrayList<Entry> obj  ) {
 	if (_root == null) {
 	    _root = new AVLNode(csv, obj);
 	    return;
@@ -49,12 +49,12 @@ public class AVLTree {
 	}
     }
 
-    public ArrayList<ArrayList<CSVEntry>> getObjects(CSVEntry csv) {
+    public ArrayList<ArrayList<Entry>> getObjects(Entry val) {
 	int compvalue;
 	_head = _root;
 
 	while ( _head != null ) {
-	    compvalue = csv.compareTo(_head._csv);
+	    compvalue = val.compareTo(_head._csv);
 
 	    if (compvalue < 0)
 		_head = _head.leftChild;
@@ -66,6 +66,11 @@ public class AVLTree {
 	return null;
     }
 
+    public ArrayList<ArrayList<Entry>> getAll() {
+	ArrayList<ArrayList<Entry>> pool = new ArrayList<ArrayList<Entry>>();
+	_root.getAll(pool);
+	return pool;
+    }
 
     protected int height(AVLNode head) {
 	int l = l_height(head);
@@ -154,15 +159,27 @@ class AVLNode {
     public AVLNode leftChild = null;
     public AVLNode rightChild = null;
 
-    public CSVEntry _csv;
-    public ArrayList<ArrayList<CSVEntry>> _objs;
+    public Entry _csv;
+    public ArrayList<ArrayList<Entry>> _objs;
 
-    public AVLNode(CSVEntry csv, ArrayList<CSVEntry> obj ) {
+    public AVLNode(Entry csv, ArrayList<Entry> obj ) {
 	_csv = csv;
-	_objs = new ArrayList<ArrayList<CSVEntry>>();
+	_objs = new ArrayList<ArrayList<Entry>>();
 	_objs.add(obj);
     }
  
+    public void getAll(ArrayList<ArrayList<Entry>> pool) {
+	if (leftChild != null) {
+	    leftChild.getAll(pool);
+	}
+	if (rightChild != null) {
+	    rightChild.getAll(pool);
+	}
+
+	pool.addAll(this._objs);
+    }
+
+
     public int compareTo(AVLNode other) {
 	return _csv.compareTo(other._csv);
     }
@@ -170,7 +187,7 @@ class AVLNode {
 	return (parent != null) ? (this.compareTo(parent)) : 0;
     }
 
-    public void addObject(ArrayList<CSVEntry> obj) {
+    public void addObject(ArrayList<Entry> obj) {
 	_objs.add(obj);
     }
 

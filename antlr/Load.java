@@ -27,11 +27,11 @@ public class Load {
 }
 
 class CSVNode {
-    public CSVEntry _entry;
-    public ArrayList<CSVEntry> _entries;
+    public Entry _entry;
+    public ArrayList<Entry> _entries;
 
-    public CSVNode(CSVEntry entry) { _entry = entry; }
-    public CSVNode(ArrayList<CSVEntry> entries) { _entries = entries; }
+    public CSVNode(Entry entry) { _entry = entry; }
+    public CSVNode(ArrayList<Entry> entries) { _entries = entries; }
 }
 
 
@@ -44,23 +44,23 @@ class CSVisitor extends SchemaBaseVisitor<CSVNode> {
 
     @Override
     public CSVNode visitGetFirstCSVEntry(SchemaParser.GetFirstCSVEntryContext ctx) {
-	CSVEntry e = visit(ctx.csventry())._entry;
-	ArrayList<CSVEntry> entries = new ArrayList<CSVEntry>();
+	Entry e = visit(ctx.csventry())._entry;
+	ArrayList<Entry> entries = new ArrayList<Entry>();
 	entries.add(e);
 	return new CSVNode(entries);
     }
 
     @Override
     public CSVNode visitGetNextCSVEntry(SchemaParser.GetNextCSVEntryContext ctx){
-	CSVEntry e = visit(ctx.csventry())._entry;
-	ArrayList<CSVEntry> entries = visit(ctx.csvrecord())._entries;
+	Entry e = visit(ctx.csventry())._entry;
+	ArrayList<Entry> entries = visit(ctx.csvrecord())._entries;
 	entries.add(e);
 	return new CSVNode(entries);
     }
 
     @Override
     public CSVNode visitGetCSVRecord(SchemaParser.GetCSVRecordContext ctx) {
-	ArrayList<CSVEntry> csvline = visit(ctx.csvrecord())._entries;
+	ArrayList<Entry> csvline = visit(ctx.csvrecord())._entries;
 	int numAttrs = _sym._attrs.size();
 	int lengthEntry = csvline.size();
 	if (numAttrs != lengthEntry) {
@@ -71,7 +71,7 @@ class CSVisitor extends SchemaBaseVisitor<CSVNode> {
 		Attribute a = _sym._attrs.get(i);
 		AVLTree t = _sym._trees.get(i);
 		if (t != null) {
-		    t.addCSVEntry(csvline.get(i), csvline);
+		    t.addEntry(csvline.get(i), csvline);
 		    //System.out.println("Added entry!");
 		}
 	    }
@@ -82,21 +82,21 @@ class CSVisitor extends SchemaBaseVisitor<CSVNode> {
     @Override
     public CSVNode visitGetCSVQstr(SchemaParser.GetCSVQstrContext ctx) {
 	String qstr = (ctx.QSTRING()).getText();
-	CSVstr entry = new CSVstr(QString.unQuote(qstr));
+	StringEntry entry = new StringEntry(QString.unQuote(qstr));
 	return new CSVNode(entry);
     }
 
     @Override
     public CSVNode visitGetCSVNumber(SchemaParser.GetCSVNumberContext ctx) {
 	int number = new Integer((ctx.NUMBER()).getText()).intValue();
-	CSVNumber entry = new CSVNumber(number);
+	NumberEntry entry = new NumberEntry(number);
 	return new CSVNode(entry);
     }
 
     @Override
     public CSVNode visitGetCSVBool(SchemaParser.GetCSVBoolContext ctx) {
 	boolean bool = new Boolean((ctx.v).getText()).booleanValue();
-	CSVBool entry = new CSVBool(bool);
+	BoolEntry entry = new BoolEntry(bool);
 	return new CSVNode(entry);
     }
 }

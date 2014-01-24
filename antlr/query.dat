@@ -1,1 +1,2 @@
-get Book Title = "test 1";
+Year=2001, Title="test 1";
+Title="test 2", Year=2002;
