@@ -3,34 +3,49 @@
 import cs1.Keyboard;
 
 public class Interface {
+             
+    /*sample queries to run:
+    Using EngineGen:
+    retrieve all from Book ;
+    retrieve count from Book ;
+    retrieve Album from Song ;
+    
+    Using EngineString:
+    retrieve all from Book where Genre = "Short Story" ;
+    retrieve count from Book where Author = "Jose Luis Borges" ;
+    retrieve Artist from Song where Genre = Pop ;
 
+    Using EngineNum:
+    retrieve all from Song where Time > 4 ;
+    retrieve count from Book where Year < 1950 ;
+    retrieve Title from Song where Time < 3.5 ;
+    */
 
-    //main method
+    //main method: interacts with user
     public static void main( String[] args ) {
-    Database sample = new Database("sampleData.txt", 12, 4);
-    boolean newQuery = true;
-    while (newQuery) {
-        System.out.println("What is your query?");
-        String query = Keyboard.readString();
         
-        Parser sampleQuery = new Parser(sample, query);        
-        //sampleQuery.printArray(sampleQuery.getQuery());
-        //System.out.println(sampleQuery.getQuery()[4]);
-        sampleQuery.parseQuery();
-	System.out.println("Another query? yes/no");
-	String moreQuery = Keyboard.readString();
-	if (moreQuery.equals("no")) {newQuery = false;}
-    }
+        boolean newQuery = true;
+        //loop as long as user wants to make queries
+        while (newQuery) {
         
-        /*sample queries to run:
-        retrieve count from sample ;
-        retrieve Title from sample ;
-        retrieve Year from sample ;
-        retrieve Title from sample where Author = "Jose Luis Borges"
-        retrieve count from sample where Genre = Fiction
-        retrieve all from sample where Title = Hamlet
-        retrieve Title from sample where Year < 1950
-        */
-    }
+            //user enters query
+            System.out.println("What is your query? (Available databases: Book, Song. Enter q to quit.)");
+            String query = Keyboard.readString();
+            if (query.equals("q")) {break;}
+            else {
+                
+                //parse and execute query
+                Parser userQuery = new Parser(query);
+                
+                //test Parser
+                //sampleQuery.printArray(sampleQuery.getQuery());
+                //System.out.println(sampleQuery.getQuery()[4]);
+                        
+                userQuery.parseQuery();
+            }
+        }
+    } //end main method
+
+
 
 } //end class

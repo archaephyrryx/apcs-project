@@ -5,16 +5,17 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Database {
-protected Object [] [] _database;
-protected Object [] dataTitles;
-protected Object [] dataTypes;
+protected Object [] [] _data; //store database in 2D array
+protected Object [] _dataTitles;  //store column titles (e.g. Title, Year)
+protected Object [] _dataTypes;  //store column types (e.g. String, Num)
 
     /*constructor
     /precondition: row matches the number of rows in the text file,
                     col matches the number of columns in the text file
     */
     public Database (String fileName, int row, int col) {
-        _database = new Object [row][col];
+        _data = new Object [row][col];
+        //read in comma-separated txt file
         try {
             BufferedReader in = new BufferedReader(new FileReader(fileName));
             String line;
@@ -22,7 +23,7 @@ protected Object [] dataTypes;
             while ((line = in.readLine()) != null) {
                 	Object [] dataArr = line.split(",");
                 	for (int i = 0; i < dataArr.length; i++) {
-                	    _database [n][i] = dataArr[i];           	    
+                	    _data [n][i] = dataArr[i];           	    
                 	}
             n++;            
             }
@@ -30,22 +31,15 @@ protected Object [] dataTypes;
         catch (IOException e) {
             System.err.println(e.getMessage());
         }
-        dataTitles = new Object [col];
-	dataTypes = new Object [col];
+        _dataTitles = new Object [col];
+	    _dataTypes = new Object [col];
         for (int i =0; i < col; i++) {
-            dataTitles[i] = _database [0][i];
-            dataTypes[i] = _database [1][i];
+            _dataTitles[i] = _data [0][i]; //column titles in first row of database
+            _dataTypes[i] = _data [1][i]; //column types in second row of database
         }
-    }
+    } 
     
-    
-    //accessor methods  
-    public Object[][] getData() {
-        return _database;
-    }
- 
-    
-    //printArr: prints each row of 2D integer array a on its own line (for testing)
+    //printArr(): prints each row of 2D array a on its own line (for testing)
     public static void printArr( Object[][] a ) {
 	    for (int r=0; r < a.length; r++) {
 	        for (int c = 0; c < a[r].length; c++ ) {
@@ -58,7 +52,7 @@ protected Object [] dataTypes;
     //main method for testing
     public static void main (String [] args) {
         Database sample = new Database("sampleData.txt", 12, 4);
-        printArr(sample._database);
+        printArr(sample._data);
     }
 
 } //end class
