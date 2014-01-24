@@ -78,7 +78,7 @@ class QueryVisitor extends SchemaBaseVisitor<QNode> {
 	ArrayList<ArrayList<Entry>> matches = initialize(cons);
 
 	for (Constraint current : cons) {
-	    filter(matches, current);
+	    matches = filter(matches, current);
 	}
 
 	printOut(matches);
@@ -109,10 +109,6 @@ class QueryVisitor extends SchemaBaseVisitor<QNode> {
 	}
 	return null;
     }
-
-
-
-
 
     public void printOut(ArrayList<ArrayList<Entry>> matches) {
 
@@ -156,7 +152,7 @@ class QueryVisitor extends SchemaBaseVisitor<QNode> {
 	return null;
     }
 
-    public void filter(ArrayList<ArrayList<Entry>> pool, Constraint con) {
+    public ArrayList<ArrayList<Entry>> filter(ArrayList<ArrayList<Entry>> pool, Constraint con) {
 	ArrayList<ArrayList<Entry>> newpool = new ArrayList<ArrayList<Entry>>();
 
 	for (ArrayList<Entry> obj : pool) {
@@ -165,7 +161,7 @@ class QueryVisitor extends SchemaBaseVisitor<QNode> {
 	   }
 	}
 
-	pool = newpool;
+	return newpool;
     }
 
     public boolean testConstraint(ArrayList<Entry> obj, Constraint con) {
@@ -176,7 +172,7 @@ class QueryVisitor extends SchemaBaseVisitor<QNode> {
 	Entry objval = obj.get(index);
 
 	if (comp == Constraint.Comparison.Equals) {
-	    return (objval == val);
+	    return (objval.equals(val));
 	}
 
 	return true;

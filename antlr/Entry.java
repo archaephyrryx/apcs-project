@@ -40,6 +40,20 @@ public class Entry<T extends Comparable<T>> {
 	}
     }
 
+    public boolean equals(Entry<T> other) {
+	if (this._type == other._type)
+	    return this.getValue().equals(other.getValue());
+
+	else {
+	    // Error
+	    System.err.println("Cannot compare different types of Entry");
+	    return false;
+	}
+    }
+
+
+
+
     public String toString() {
 	//Overwritten
 	return "OVERWRITTEN";
