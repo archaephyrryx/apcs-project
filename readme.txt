@@ -1,4 +1,12 @@
 This project is a simple database query language that allows users to search a database while specifying conditions.
+
+Two implementations were developed in parallel, one with a more advanced
+query interface in the main directory, and another with a more flexible
+grammar based on the ANTLR parser generator in the "antlr/" subdirectory.
+There was not time to combine the two approaches into a single program
+that has a rich query interface and a flexible grammar, for the antlr
+implementation, see the readme.txt file in that directory.
+
 To run the project, run Interface.java and enter the sample queries specified in the file.
 Sample queries are also specified in queries.txt.
 
