@@ -15,22 +15,50 @@ Continued planning.
 2014-01-14
 Created sample database for testing.
 
+2014-01-15
+Created node class, tree class
+Node class written
+
 2014-01-16
 Began work on Interface and Parser.
+Recursive add moved to tree
 
 2014-01-17
 Continued work on Interface and Parser, began work on Engine.
+Node and Root in short-term completion, untested
+
+2014-01-19
+Added AVL tree, polished Node,Root,Tree
+Removed Parser (will use parser-generator)
+Added antlr grammar files, main for indev schema
+
+
+2014-01-20
+Checkpoint for grammar
+Added clarification, finished makefile
+Added CSV file loading
 
 2014-01-21
 Projects diverged. Peter began working on a query language implementation using antlr, Lydia continued to work on creating a parser and engine from scratch.
 Created Database to store databases.
+Added classes for CSV Entries
+QStr class, bool/int/str csv entries
+Moved symbol+loader out of main
+Data loading and storage implementedData loading and storage implementedData
 
 2014-01-22
 Got EngineGen and EngineString working.
+One-book year query successful
+Loading, AVLTree add/get/rebal debugged
+Added query support, unimplemented
 
 2014-01-23
 Got EngineNum working. Created new sample database. Put final touches on project, commented code.
+Single-factor queries operational, CSV -> Entry
+Added bundle of all necessary files
 
+2014-01-24
+Multi-factor queries now functional
 
 Obstacles Overcome
 Not having multiple-word phrases entered by user being split up into different elements of the query array. Resolved by consulting Stack Overflow.
@@ -44,12 +72,13 @@ Creating larger sample databases.
 Cool Stuff Learned
 How to split strings into arrays
 How to read in files
-Exceptions handling
+    Exceptions handling
+ANTLR (Parser-Generators)
 
-Mid-Development Design Changes
-At first EngineGen.java was going to be an interface, but then it seemed more useful as a superclass, and finally it became a regular class of its own.
-There was going to be a class EngineBool.java but the functionality planned for it was already covered by EngineString.java.
+    Mid-Development Design Changes
+    At first EngineGen.java was going to be an interface, but then it seemed more useful as a superclass, and finally it became a regular class of its own.
+    There was going to be a class EngineBool.java but the functionality planned for it was already covered by EngineString.java.
 
-Lessons Learned
-Plan for code to as general as possible so it is easier to add functionality later on.
-Make a clear plan at the beginning of who is doing what and how everything is going to fit together.
+    Lessons Learned
+    Plan for code to as general as possible so it is easier to add functionality later on.
+    Make a clear plan at the beginning of who is doing what and how everything is going to fit together.
