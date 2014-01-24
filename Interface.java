@@ -13,7 +13,7 @@ public class Interface {
     
     Using EngineString:
     retrieve all from Book where Genre = "Short Story" ;
-    retrieve count from Book where Author = "Jose Luis Borges" ;
+    retrieve count from Book where Author != "Jose Luis Borges" ;
     retrieve Artist from Song where Genre = Pop ;
 
     Using EngineNum:
