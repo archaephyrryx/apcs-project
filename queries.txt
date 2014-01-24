@@ -1,6 +1,3 @@
-//sample queries
-//to run: cat queries.txt | java Interface
-
 retrieve all from Book ;
 retrieve count from Book ;
 retrieve Album from Song ;
